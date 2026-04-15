@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" translate="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google" content="notranslate">
+  <meta http-equiv="Content-Language" content="en">
+  <title>Kotodama — Discover the Spirit of Your Name</title>
+  <!-- Google Analytics 4 — Replace G-XXXXXXXXXX with your Measurement ID -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Noto+Sans+JP:wght@300;400;600;700;900&family=Noto+Serif+JP:wght@300;400;600;700&family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <h1>Kotodama</h1>
+    <p>Discover the hidden meaning of your name in Japanese</p>
+    <img src="logo.png" alt="Kotodama" class="header-logo">
+  </header>
+
+  <!-- Input Section -->
+  <section class="input-section">
+    <div class="input-group">
+      <label class="input-label">Enter your name</label>
+      <input
+        type="text"
+        id="nameInput"
+        class="name-input"
+        placeholder="e.g. Michael, María, François, Wei"
+        autocomplete="off"
+      >
+      <div id="romajiPreview" class="romaji-preview"></div>
+    </div>
+
+    <div class="input-group" id="romajiEditGroup">
+      <label class="input-label">Japanese pronunciation (auto-converted / editable)</label>
+      <input
+        type="text"
+        id="romajiInput"
+        class="name-input romaji-edit"
+        placeholder="Auto-filled (you can edit)"
+        autocomplete="off"
+      >
+      <div id="hiraganaPreview" class="romaji-preview"></div>
+      <p class="input-hint">
+        If your name isn't in our dictionary, you can manually type the pronunciation here<br>
+        Use "-" for long vowels (e.g. a- for āh)
+      </p>
+    </div>
+
+    <div id="charWarning" class="char-warning hidden"></div>
+    <button id="generateBtn" class="generate-btn">Reveal My Kotodama</button>
+  </section>
+
+  <!-- 結果セクション -->
+  <section id="resultSection" class="result-section hidden">
+
+    <!-- ひらがな表示 -->
+    <div class="hiragana-display-area">
+      <div class="hiragana-label">YOUR NAME IN HIRAGANA</div>
+      <div id="hiraganaDisplay" class="hiragana-display"></div>
+    </div>
+
+    <!-- 意味カード -->
+    <div class="meaning-cards-area">
+      <h2>THE SPIRIT OF EACH SOUND</h2>
+      <div id="meaningCards" class="meaning-cards"></div>
+    </div>
+
+    <!-- 意味一覧 -->
+    <div class="meanings-list-area">
+      <h2>KOTODAMA MEANINGS</h2>
+      <ul id="meaningsList" class="meanings-list"></ul>
+    </div>
+
+    <!-- ストーリー -->
+    <div class="story-area">
+      <h2>YOUR NAME'S STORY</h2>
+      <p id="storyText" class="story-text"></p>
+    </div>
+
+    <!-- Share Card -->
+    <div class="template-section">
+      <h2 class="section-heading">YOUR SHARE CARD</h2>
+
+      <!-- Canvas Preview -->
+      <div class="preview-wrapper">
+        <canvas id="shareCardCanvas" width="1080" height="1080" style="width: 380px; height: 380px;"></canvas>
+      </div>
+
+      <!-- Share & Download -->
+      <div class="share-buttons">
+        <button id="downloadCardBtn" class="generate-btn">Download Card</button>
+        <button id="shareTwitterBtn" class="share-btn share-twitter">Share on X</button>
+        <button id="shareCopyBtn" class="share-btn share-copy">Copy Link</button>
+      </div>
+
+      <!-- CTA -->
+      <div id="ctaSection" class="cta-section">
+        <h3 class="cta-heading">Love your Kotodama? Get it on a T-shirt.</h3>
+        <form id="ctaForm" class="cta-form" action="" method="POST">
+          <input type="email" id="ctaEmail" class="cta-email" placeholder="Enter your email" required>
+          <button type="submit" class="cta-submit">Notify Me</button>
+        </form>
+        <p class="cta-hint">We'll let you know when your personalized design is ready to wear.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <script src="name-dictionary.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
