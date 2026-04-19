@@ -161,8 +161,82 @@ const ROMAJI_MAP = [
   ['a','あ'],['i','い'],['u','う'],['e','え'],['o','お'],
 ];
 
+// 英語綴りを日本語読みに近いローマ字へ正規化する前処理
+// 辞書にない名前のフォールバック精度を上げるためのルール群
+function normalizeEnglishSpelling(input) {
+  let s = input.toLowerCase().trim();
+
+  // 1. 長母音
+  s = s.replace(/ee/g, 'i-');
+  s = s.replace(/oo/g, 'u-');
+  s = s.replace(/ou/g, 'o-');
+
+  // 2. 外来音を既存のかなに丸める（kotodama定義のある文字に落とす）
+  s = s.replace(/she/g, 'shi');
+  s = s.replace(/che/g, 'chi');
+  s = s.replace(/je/g, 'ji');
+  s = s.replace(/fa/g, 'ha');
+  s = s.replace(/fi/g, 'hi');
+  s = s.replace(/fe/g, 'he');
+  s = s.replace(/fo/g, 'ho');
+  s = s.replace(/va/g, 'ba');
+  s = s.replace(/vi/g, 'bi');
+  s = s.replace(/vu/g, 'bu');
+  s = s.replace(/ve/g, 'be');
+  s = s.replace(/vo/g, 'bo');
+
+  // 3. 英語の 'c' を文脈で分離（ce/ci → s系、ca/co/cu → k系）
+  s = s.replace(/ce/g, 'se');
+  s = s.replace(/ci/g, 'shi');
+  s = s.replace(/ca/g, 'ka');
+  s = s.replace(/co/g, 'ko');
+  s = s.replace(/cu/g, 'ku');
+
+  // 4. ダイグラフ
+  s = s.replace(/th/g, 's');
+  s = s.replace(/ph/g, 'fu');
+  s = s.replace(/ck/g, 'kku');
+  s = s.replace(/x/g, 'kkusu');
+  s = s.replace(/qu/g, 'ku');
+
+  // 5. sh/ch が母音以外の前にある場合に u/i を補う
+  //    （shr → shur、語末 sh → shu など）
+  s = s.replace(/sh(?![aeiou])/g, 'shu');
+  s = s.replace(/ch(?![aeiou])/g, 'chi');
+
+  // 6. 語末 ew → yu-（Mathew/Andrew/Drew 系）
+  s = s.replace(/ew$/g, 'yu-');
+
+  // 7. 残った 'c' を 'k' に統一（cr, cl などのクラスタ用）
+  s = s.replace(/c/g, 'k');
+
+  // 8. 隣接子音の間に 'u' を挿入（汎用クラスタ分解）
+  //    h は除外（sh/ch の digraph 保護）、n/y/q/w も除外（特殊役割）
+  //    同一子音ペア（kk/tt/ss 等）は除外し、促音として残す
+  //    複数回パスして連鎖クラスタに対応
+  for (let pass = 0; pass < 3; pass++) {
+    s = s.replace(/([bdfgjklmprstvz])([bdfgjklmprstvz])/g,
+      (m, a, b) => a === b ? m : a + 'u' + b);
+  }
+
+  // 9. 語末の孤立子音に母音を補う
+  s = s.replace(/([bcdfghjklmpstvz])$/g, (_, c) => {
+    const vowel = { b: 'u', c: 'u', d: 'o', f: 'u', g: 'u', h: '', j: 'i',
+                    k: 'u', l: 'ru', m: 'u', p: 'u', s: 'u', t: 'o', v: 'u', z: 'u' };
+    return c + (vowel[c] !== undefined ? vowel[c] : 'u');
+  });
+
+  // 10. 語末 r → 長音
+  s = s.replace(/r$/g, '-');
+
+  // 11. w の整理（wa/wi/we/wo 以外では除去）
+  s = s.replace(/w(?![aieo])/g, '');
+
+  return s;
+}
+
 function romajiToHiragana(input) {
-  let str = input.toLowerCase().trim();
+  let str = normalizeEnglishSpelling(input);
   let result = '';
   let i = 0;
 
