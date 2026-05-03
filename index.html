@@ -38,23 +38,17 @@
         placeholder="e.g. Michael, María, François, Wei"
         autocomplete="off"
       >
-      <div id="romajiPreview" class="romaji-preview"></div>
+      <div id="hiraganaPreview" class="romaji-preview"></div>
     </div>
 
-    <div class="input-group" id="romajiEditGroup">
-      <label class="input-label">Japanese pronunciation (auto-converted / editable)</label>
+    <div class="input-group hidden" id="romajiEditGroup">
       <input
         type="text"
         id="romajiInput"
         class="name-input romaji-edit"
-        placeholder="Auto-filled (you can edit)"
         autocomplete="off"
       >
-      <div id="hiraganaPreview" class="romaji-preview"></div>
-      <p class="input-hint">
-        If your name isn't in our dictionary, you can manually type the pronunciation here<br>
-        Use "-" for long vowels (e.g. a- for āh)
-      </p>
+      <div id="romajiPreview" class="romaji-preview"></div>
     </div>
 
     <div id="charWarning" class="char-warning hidden"></div>

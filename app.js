@@ -106,7 +106,19 @@ const kotodamaData = {
     "ぴ": { "meaning": "軽やかな発想", "romaji": "pi", "motif": "light_idea", "color": "#E7B8B8", "image": null },
     "ぷ": { "meaning": "自由な飛躍", "romaji": "pu", "motif": "free_jump", "color": "#DBA4A4", "image": null },
     "ぺ": { "meaning": "柔らかな革命", "romaji": "pe", "motif": "soft_revolution", "color": "#CC9191", "image": null },
-    "ぽ": { "meaning": "ほがらかな豊かさ", "romaji": "po", "motif": "cheerful_abundance", "color": "#C08888" }
+    "ぽ": { "meaning": "ほがらかな豊かさ", "romaji": "po", "motif": "cheerful_abundance", "color": "#C08888" },
+    "じゃ": { "meaning": "流れるような洞察", "romaji": "ja", "motif": "flowing_insight", "color": "#8094B8", "image": null },
+    "じゅ": { "meaning": "柔軟な知性", "romaji": "ju", "motif": "adaptive_wisdom", "color": "#7A89B0", "image": null },
+    "じょ": { "meaning": "静かなる導き", "romaji": "jo", "motif": "quiet_guidance", "color": "#6E7DA6", "image": null },
+    "ぎゃ": { "meaning": "力強い直感", "romaji": "gya", "motif": "strong_intuition", "color": "#B47A7A", "image": null },
+    "ぎゅ": { "meaning": "凝縮された洞察", "romaji": "gyu", "motif": "concentrated_insight", "color": "#AC7373", "image": null },
+    "ぎょ": { "meaning": "揺るぎない眼差し", "romaji": "gyo", "motif": "unwavering_gaze", "color": "#A06868", "image": null },
+    "びゃ": { "meaning": "輝く始まり", "romaji": "bya", "motif": "radiant_beginning", "color": "#C58E8E", "image": null },
+    "びゅ": { "meaning": "軽やかな煌めき", "romaji": "byu", "motif": "lively_sparkle", "color": "#BA8484", "image": null },
+    "びょ": { "meaning": "美しい飛翔", "romaji": "byo", "motif": "beautiful_flight", "color": "#AF7A7A", "image": null },
+    "ぴゃ": { "meaning": "弾ける発想", "romaji": "pya", "motif": "bursting_idea", "color": "#DCA4A4", "image": null },
+    "ぴゅ": { "meaning": "風のような閃き", "romaji": "pyu", "motif": "wind_spark", "color": "#D6A0A0", "image": null },
+    "ぴょ": { "meaning": "跳ねる喜び", "romaji": "pyo", "motif": "leaping_joy", "color": "#CC9494", "image": null }
   }
 };
 
@@ -388,23 +400,13 @@ function convertName(input) {
 // --- UI更新 ---
 function onNameInput(e) {
   const input = e.target.value.trim();
-  const preview = document.getElementById('romajiPreview');
   const romajiInput = document.getElementById('romajiInput');
 
   if (input.length > 0) {
     const result = convertName(input);
     romajiInput.value = result.romaji;
-    if (result.source === 'dictionary') {
-      preview.textContent = `Found: ${result.romaji}`;
-      preview.style.color = '#6BAF5E';
-    } else {
-      preview.textContent = 'Not in dictionary — please check the pronunciation below';
-      preview.style.color = '#FF6F5C';
-    }
-    // ひらがなプレビューも更新
     updateHiraganaPreview(result.romaji);
   } else {
-    preview.textContent = '';
     romajiInput.value = '';
     document.getElementById('hiraganaPreview').textContent = '';
   }
@@ -604,6 +606,18 @@ const ENGLISH_MEANINGS = {
   "ぷ": "Leap — free and boundless",
   "ぺ": "Soft Revolution — gentle change",
   "ぽ": "Cheerful Plenty — bright abundance",
+  "じゃ": "Flowing Insight — perception in motion",
+  "じゅ": "Adaptive Wisdom — flexible intelligence",
+  "じょ": "Quiet Guidance — gentle direction",
+  "ぎゃ": "Strong Intuition — powerful perception",
+  "ぎゅ": "Concentrated Insight — focused depth",
+  "ぎょ": "Unwavering Gaze — steady vision",
+  "びゃ": "Radiant Beginning — luminous start",
+  "びゅ": "Lively Sparkle — vivid shimmer",
+  "びょ": "Beautiful Flight — graceful ascent",
+  "ぴゃ": "Bursting Idea — vibrant inspiration",
+  "ぴゅ": "Wind Spark — swift insight",
+  "ぴょ": "Leaping Joy — bounding delight",
 };
 
 function getEnglishMeaning(kana) {
