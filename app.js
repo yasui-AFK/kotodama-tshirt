@@ -118,7 +118,19 @@ const kotodamaData = {
     "びょ": { "meaning": "美しい飛翔", "romaji": "byo", "motif": "beautiful_flight", "color": "#AF7A7A", "image": null },
     "ぴゃ": { "meaning": "弾ける発想", "romaji": "pya", "motif": "bursting_idea", "color": "#DCA4A4", "image": null },
     "ぴゅ": { "meaning": "風のような閃き", "romaji": "pyu", "motif": "wind_spark", "color": "#D6A0A0", "image": null },
-    "ぴょ": { "meaning": "跳ねる喜び", "romaji": "pyo", "motif": "leaping_joy", "color": "#CC9494", "image": null }
+    "ぴょ": { "meaning": "跳ねる喜び", "romaji": "pyo", "motif": "leaping_joy", "color": "#CC9494", "image": null },
+    "じぇ": { "meaning": "越境する洞察", "romaji": "je", "motif": "crossing_insight", "color": "#8094B8", "image": null },
+    "しぇ": { "meaning": "異国の静けさ", "romaji": "she", "motif": "foreign_stillness", "color": "#4A6878", "image": null },
+    "ちぇ": { "meaning": "大地越えの旅", "romaji": "che", "motif": "crossing_earth", "color": "#8C7050", "image": null },
+    "ふぁ": { "meaning": "自由なる夜明け", "romaji": "fa", "motif": "free_dawn", "color": "#B4B0E0", "image": null },
+    "ふぃ": { "meaning": "風に乗る感性", "romaji": "fi", "motif": "wind_intuition", "color": "#A0C8D9", "image": null },
+    "ふぇ": { "meaning": "軽やかな調和", "romaji": "fe", "motif": "airy_harmony", "color": "#C8D9B0", "image": null },
+    "ふぉ": { "meaning": "風と大地の融合", "romaji": "fo", "motif": "wind_meets_earth", "color": "#A89878", "image": null },
+    "てぃ": { "meaning": "繊細な探求", "romaji": "ti", "motif": "delicate_quest", "color": "#D8B080", "image": null },
+    "でぃ": { "meaning": "静かな根基", "romaji": "di", "motif": "quiet_foundation", "color": "#806848", "image": null },
+    "うぃ": { "meaning": "澄んだ広がり", "romaji": "wi", "motif": "clear_expanse", "color": "#6BB8C8", "image": null },
+    "うぇ": { "meaning": "潤いの広がり", "romaji": "we", "motif": "nurturing_space", "color": "#88C8B8", "image": null },
+    "うぉ": { "meaning": "大いなる包容", "romaji": "wo", "motif": "vast_embrace", "color": "#5090A0", "image": null }
   }
 };
 
@@ -149,26 +161,32 @@ const ROMAJI_MAP = [
   ['bya','びゃ'],['byu','びゅ'],['byo','びょ'],
   ['pya','ぴゃ'],['pyu','ぴゅ'],['pyo','ぴょ'],
   ['jya','じゃ'],['jyu','じゅ'],['jyo','じょ'],
+  // 外来音（3文字）
+  ['she','しぇ'],['che','ちぇ'],
   // 2文字の特殊音
   ['shi','し'],['chi','ち'],['tsu','つ'],['fu','ふ'],
   ['ja','じゃ'],['ju','じゅ'],['jo','じょ'],
+  // 外来音（2文字）— 小書き ぁぃぇぉ で外国名の音を表現
+  ['je','じぇ'],
+  ['fa','ふぁ'],['fi','ふぃ'],['fe','ふぇ'],['fo','ふぉ'],
+  ['ti','てぃ'],['di','でぃ'],
   // 濁音・半濁音（2文字）
   ['ga','が'],['gi','ぎ'],['gu','ぐ'],['ge','げ'],['go','ご'],
   ['za','ざ'],['ji','じ'],['zu','ず'],['ze','ぜ'],['zo','ぞ'],
-  ['da','だ'],['di','ぢ'],['du','づ'],['de','で'],['do','ど'],
+  ['da','だ'],['du','づ'],['de','で'],['do','ど'],
   ['ba','ば'],['bi','び'],['bu','ぶ'],['be','べ'],['bo','ぼ'],
   ['pa','ぱ'],['pi','ぴ'],['pu','ぷ'],['pe','ぺ'],['po','ぽ'],
   // 基本音（2文字）
   ['ka','か'],['ki','き'],['ku','く'],['ke','け'],['ko','こ'],
   ['sa','さ'],['si','し'],['su','す'],['se','せ'],['so','そ'],
-  ['ta','た'],['ti','ち'],['tu','つ'],['te','て'],['to','と'],
+  ['ta','た'],['tu','つ'],['te','て'],['to','と'],
   ['na','な'],['ni','に'],['nu','ぬ'],['ne','ね'],['no','の'],
   ['ha','は'],['hi','ひ'],['hu','ふ'],['he','へ'],['ho','ほ'],
   ['ma','ま'],['mi','み'],['mu','む'],['me','め'],['mo','も'],
   ['ra','ら'],['ri','り'],['ru','る'],['re','れ'],['ro','ろ'],
   ['la','ら'],['li','り'],['lu','る'],['le','れ'],['lo','ろ'],
   ['ya','や'],['yu','ゆ'],['yo','よ'],
-  ['wa','わ'],['wi','ゐ'],['we','ゑ'],['wo','を'],
+  ['wa','わ'],['wi','うぃ'],['we','うぇ'],['wo','うぉ'],
   // 母音（1文字）
   ['a','あ'],['i','い'],['u','う'],['e','え'],['o','お'],
 ];
@@ -183,14 +201,9 @@ function normalizeEnglishSpelling(input) {
   s = s.replace(/oo/g, 'u-');
   s = s.replace(/ou/g, 'o-');
 
-  // 2. 外来音を既存のかなに丸める（kotodama定義のある文字に落とす）
-  s = s.replace(/she/g, 'shi');
-  s = s.replace(/che/g, 'chi');
-  s = s.replace(/je/g, 'ji');
-  s = s.replace(/fa/g, 'ha');
-  s = s.replace(/fi/g, 'hi');
-  s = s.replace(/fe/g, 'he');
-  s = s.replace(/fo/g, 'ho');
+  // 2. 外来音の正規化
+  //    she/che/je/fa/fi/fe/fo は ROMAJI_MAP で直接 しぇ/ちぇ/じぇ/ふぁ等に変換するため
+  //    ここでは丸めない。v系のみ ヴ族を持たないため b 族に丸める。
   s = s.replace(/va/g, 'ba');
   s = s.replace(/vi/g, 'bi');
   s = s.replace(/vu/g, 'bu');
@@ -618,6 +631,18 @@ const ENGLISH_MEANINGS = {
   "ぴゃ": "Bursting Idea — vibrant inspiration",
   "ぴゅ": "Wind Spark — swift insight",
   "ぴょ": "Leaping Joy — bounding delight",
+  "じぇ": "Crossing Insight — perception across borders",
+  "しぇ": "Foreign Stillness — quiet from afar",
+  "ちぇ": "Wanderer — earth crossed, paths joined",
+  "ふぁ": "Free Dawn — winds of new beginnings",
+  "ふぃ": "Wind Intuition — sensing on the breeze",
+  "ふぇ": "Airy Harmony — soft and weightless balance",
+  "ふぉ": "Convergence — wind meeting earth",
+  "てぃ": "Delicate Quest — fine-tuned reaching",
+  "でぃ": "Quiet Foundation — calm stability",
+  "うぃ": "Clear Expanse — crystal-bright openness",
+  "うぇ": "Nurturing Space — gentle abundance",
+  "うぉ": "Vast Embrace — sheltering all",
 };
 
 function getEnglishMeaning(kana) {

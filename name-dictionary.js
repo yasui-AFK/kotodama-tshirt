@@ -485,6 +485,7 @@ const NAME_DICTIONARY = {
   "stevie": "suti-bi-",
   "eddie": "edhi-",
   "eddy": "edhi-",
+  "shreejesh": "suri-jesu",
 };
 
 // 辞書で変換を試みる。ヒットしなければnullを返す
