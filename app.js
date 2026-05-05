@@ -191,10 +191,29 @@ const ROMAJI_MAP = [
   ['a','あ'],['i','い'],['u','う'],['e','え'],['o','お'],
 ];
 
+// Unicode アクセント記号を ASCII に正規化
+// 仏語(é/à/ç)・独語(ä/ö/ü/ß)・西語(ñ)・北欧(ø/å)・伊語の名前で辞書ヒット率と変換精度を上げる前処理
+function stripAccents(s) {
+  return s
+    .replace(/ç/gi, 's')           // 仏語セディーユ（François の s 音）
+    .replace(/ß/g, 'ss')           // 独語エスツェット
+    .replace(/[æÆ]/g, 'ae')
+    .replace(/[œŒ]/g, 'oe')
+    .replace(/[øØ]/g, 'o')
+    .replace(/[łŁ]/g, 'l')
+    .normalize('NFD')              // é → e + 結合文字に分解
+    .replace(/[\u0300-\u036f]/g, ''); // 結合文字（アクセント等）を除去
+}
+
 // 英語綴りを日本語読みに近いローマ字へ正規化する前処理
 // 辞書にない名前のフォールバック精度を上げるためのルール群
 function normalizeEnglishSpelling(input) {
-  let s = input.toLowerCase().trim();
+  let s = stripAccents(input).toLowerCase().trim();
+
+  // 0. ヨーロッパ言語の silent endings（既存ルールとの衝突を避けるため最初に処理）
+  s = s.replace(/que$/g, 'kku');   // Frédérique → frederikku → ふれでりっく
+  s = s.replace(/eaux?$/g, 'o-');  // Cousteau / eaux → o-
+  s = s.replace(/ault$/g, 'o-');   // Renault → reno-
 
   // 1. 長母音
   s = s.replace(/ee/g, 'i-');
@@ -393,8 +412,16 @@ function generateStory(name, kotodamaResults) {
 
 // --- 名前変換（辞書→ローマ字の2段階） ---
 function convertName(input) {
-  // 1. まず辞書で英語名を検索
-  const dictResult = lookupNameDictionary(input);
+  const trimmed = input.trim();
+  // 1a. まず元の入力で辞書検索（アクセント付きキー対応のため）
+  let dictResult = lookupNameDictionary(trimmed);
+  // 1b. ヒットしなければアクセント除去版で再検索（Frédérique → frederique）
+  if (!dictResult) {
+    const stripped = stripAccents(trimmed);
+    if (stripped.toLowerCase() !== trimmed.toLowerCase()) {
+      dictResult = lookupNameDictionary(stripped);
+    }
+  }
   if (dictResult) {
     return {
       romaji: dictResult,
@@ -402,7 +429,7 @@ function convertName(input) {
       source: 'dictionary'
     };
   }
-  // 2. 辞書にない場合はローマ字としてそのまま変換
+  // 2. 辞書にない場合はローマ字としてそのまま変換（normalizeEnglishSpelling内でアクセント除去される）
   return {
     romaji: input.toLowerCase(),
     hiragana: romajiToHiragana(input),
