@@ -908,6 +908,73 @@ function initShareButtons() {
   });
 }
 
+// --- PDF Personal Reading（収益商品） ---
+// Canvas シェアカードを A4 PDF にラップ。jsPDF の日本語フォント問題を回避するため
+// ひらがな部分は Canvas 画像として埋め込む。
+async function generatePersonalReadingPdf(name) {
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert('PDF library not loaded. Please refresh the page.');
+    return;
+  }
+  const canvas = document.getElementById('shareCardCanvas');
+  if (!canvas) return;
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  // ヘッダー
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(11);
+  pdf.setTextColor(197, 61, 67); // accent-red
+  pdf.text('K  O  T  O  D  A  M  A', 105, 18, { align: 'center' });
+
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(9);
+  pdf.setTextColor(122, 110, 88);
+  pdf.text('Personal Reading', 105, 24, { align: 'center' });
+
+  // メインビジュアル（既存シェアカード Canvas を中央に配置）
+  const imgData = canvas.toDataURL('image/png');
+  const imgSize = 170; // mm
+  const x = (210 - imgSize) / 2;
+  const y = 35;
+  pdf.addImage(imgData, 'PNG', x, y, imgSize, imgSize);
+
+  // フッター
+  pdf.setFontSize(8);
+  pdf.setTextColor(150, 140, 120);
+  pdf.text(`A unique reading for ${name}`, 105, 225, { align: 'center' });
+
+  pdf.setFontSize(7);
+  pdf.text('kotodama.app  ·  The spirit of your name', 105, 285, { align: 'center' });
+
+  pdf.save(`kotodama-${name.toLowerCase().replace(/\s+/g, '-')}-reading.pdf`);
+
+  trackEvent('pdf_preview_download', { name_input: name });
+}
+
+function initPdfButtons() {
+  const previewBtn = document.getElementById('previewPdfBtn');
+  if (previewBtn) {
+    previewBtn.addEventListener('click', () => {
+      const name = document.getElementById('nameInput').value.trim();
+      if (!name) {
+        alert('Please enter your name first.');
+        return;
+      }
+      generatePersonalReadingPdf(name);
+    });
+  }
+
+  const buyBtn = document.getElementById('buyPdfBtn');
+  if (buyBtn) {
+    buyBtn.addEventListener('click', () => {
+      const name = document.getElementById('nameInput').value.trim();
+      trackEvent('pdf_buy_click', { name_input: name });
+    });
+  }
+}
+
 // --- CTA フォーム ---
 function initCTA() {
   const form = document.getElementById('ctaForm');
@@ -950,4 +1017,5 @@ document.addEventListener('DOMContentLoaded', () => {
   init();
   initShareButtons();
   initCTA();
+  initPdfButtons();
 });

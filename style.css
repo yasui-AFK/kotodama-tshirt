@@ -420,6 +420,39 @@ body {
   backdrop-filter: blur(8px);
 }
 
+/* --- PDF Reading CTA (primary revenue product) --- */
+.pdf-cta {
+  border: 2px solid var(--accent-red);
+  background: rgba(255, 252, 245, 0.85);
+}
+
+.pdf-cta-desc {
+  margin-bottom: 1.5rem !important;
+  font-size: 0.95rem !important;
+  color: var(--text) !important;
+  line-height: 1.6;
+}
+
+.pdf-cta-buttons {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.pdf-buy-btn {
+  background: var(--accent-red) !important;
+  color: #fff !important;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdf-buy-btn:hover {
+  background: #a8323a !important;
+}
+
 .cta-heading {
   font-size: 1.15rem;
   font-weight: 400;
