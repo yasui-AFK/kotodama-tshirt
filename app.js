@@ -700,10 +700,10 @@ async function preloadFonts() {
 }
 
 // Bold Washi シェアカード描画
-async function renderShareCard(name, hiragana, kotodamaResults) {
+async function renderShareCard(name, hiragana, kotodamaResults, canvasId = 'shareCardCanvas') {
   const [, bgImg] = await Promise.all([preloadFonts(), loadBgImage()]);
 
-  const canvas = document.getElementById('shareCardCanvas');
+  const canvas = document.getElementById(canvasId);
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const W = 1080;
@@ -1002,6 +1002,161 @@ function initPdfButtons() {
   }
 }
 
+// --- Couple Reading（$35 SKU） ---
+// 2つの名前を受け取り、それぞれのひらがな・言霊・ストーリーを描画。
+// 個人版と同じ Canvas → PDF 埋込み方式で日本語フォント問題を回避。
+function buildNameReading(name) {
+  if (!name || !name.trim()) return null;
+  const trimmed = name.trim();
+  const conv = convertName(trimmed);
+  const hiragana = romajiToHiragana(conv.romaji);
+  const kotodamaResults = lookupKotodama(hiragana);
+  return { name: trimmed, hiragana, kotodamaResults };
+}
+
+function generateCoupleResonance(reading1, reading2) {
+  const k1 = reading1.kotodamaResults.filter(k => !k.isSpecial);
+  const k2 = reading2.kotodamaResults.filter(k => !k.isSpecial);
+  const themes1 = k1.slice(0, 3).map(k => getEnglishMeaning(k.kana).split('—')[0].trim().toLowerCase());
+  const themes2 = k2.slice(0, 3).map(k => getEnglishMeaning(k.kana).split('—')[0].trim().toLowerCase());
+  const n1 = reading1.name;
+  const n2 = reading2.name;
+
+  const lines = [
+    `${n1} & ${n2} — your kotodama meet in resonance.`,
+    `${n1} carries the spirits of ${themes1.join(', ')}.`,
+    `${n2} carries the spirits of ${themes2.join(', ')}.`,
+    `Together, your sounds weave a harmony that only you two share — a sacred dance of the hidden meanings within your names.`
+  ];
+  return lines;
+}
+
+async function updateCoupleHiraganaPreview() {
+  const n1 = document.getElementById('coupleName1').value.trim();
+  const n2 = document.getElementById('coupleName2').value.trim();
+  const p1 = document.getElementById('coupleHiragana1');
+  const p2 = document.getElementById('coupleHiragana2');
+  p1.textContent = n1 ? `→ ${romajiToHiragana(convertName(n1).romaji)}` : '';
+  p2.textContent = n2 ? `→ ${romajiToHiragana(convertName(n2).romaji)}` : '';
+}
+
+async function generateCoupleReadingPdf(name1, name2) {
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert('PDF library not loaded. Please refresh the page.');
+    return;
+  }
+  const reading1 = buildNameReading(name1);
+  const reading2 = buildNameReading(name2);
+  if (!reading1 || !reading2) {
+    alert('Please enter both names.');
+    return;
+  }
+
+  // 2つの隠しCanvasに各名前のシェアカードをレンダリング
+  await renderShareCard(reading1.name, reading1.hiragana, reading1.kotodamaResults, 'coupleCardCanvas1');
+  await renderShareCard(reading2.name, reading2.hiragana, reading2.kotodamaResults, 'coupleCardCanvas2');
+
+  const canvas1 = document.getElementById('coupleCardCanvas1');
+  const canvas2 = document.getElementById('coupleCardCanvas2');
+  const img1 = canvas1.toDataURL('image/png');
+  const img2 = canvas2.toDataURL('image/png');
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  // === Page 1: Cover + 2 cards side by side ===
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(11);
+  pdf.setTextColor(197, 61, 67);
+  pdf.text('K  O  T  O  D  A  M  A', 105, 18, { align: 'center' });
+
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(9);
+  pdf.setTextColor(122, 110, 88);
+  pdf.text('Couple Reading', 105, 24, { align: 'center' });
+
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(16);
+  pdf.setTextColor(60, 50, 40);
+  pdf.text(`${reading1.name}  &  ${reading2.name}`, 105, 38, { align: 'center' });
+
+  // 2カードを左右に配置
+  const cardSize = 85; // mm
+  const gap = 8;
+  const totalWidth = cardSize * 2 + gap;
+  const startX = (210 - totalWidth) / 2;
+  const cardY = 50;
+  pdf.addImage(img1, 'PNG', startX, cardY, cardSize, cardSize);
+  pdf.addImage(img2, 'PNG', startX + cardSize + gap, cardY, cardSize, cardSize);
+
+  // 名前ラベル
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(10);
+  pdf.setTextColor(122, 110, 88);
+  pdf.text(reading1.name, startX + cardSize / 2, cardY + cardSize + 7, { align: 'center' });
+  pdf.text(reading2.name, startX + cardSize + gap + cardSize / 2, cardY + cardSize + 7, { align: 'center' });
+
+  // === Resonance section ===
+  const resonanceLines = generateCoupleResonance(reading1, reading2);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(12);
+  pdf.setTextColor(197, 61, 67);
+  pdf.text('THE RESONANCE BETWEEN YOU', 105, 160, { align: 'center' });
+
+  pdf.setFont('helvetica', 'italic');
+  pdf.setFontSize(10);
+  pdf.setTextColor(80, 70, 60);
+  let y = 172;
+  resonanceLines.forEach((line, i) => {
+    const wrapped = pdf.splitTextToSize(line, 170);
+    wrapped.forEach(w => {
+      pdf.text(w, 105, y, { align: 'center' });
+      y += 6;
+    });
+    y += 2;
+  });
+
+  // フッター
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(7);
+  pdf.setTextColor(150, 140, 120);
+  pdf.text('kotodama.app  ·  The spirit of your names', 105, 285, { align: 'center' });
+
+  const slug = `${reading1.name}-${reading2.name}`.toLowerCase().replace(/\s+/g, '-');
+  pdf.save(`kotodama-couple-${slug}-reading.pdf`);
+
+  trackEvent('couple_pdf_preview_download', { name1: reading1.name, name2: reading2.name });
+}
+
+function initCoupleButtons() {
+  const n1 = document.getElementById('coupleName1');
+  const n2 = document.getElementById('coupleName2');
+  if (n1) n1.addEventListener('input', debounce(updateCoupleHiraganaPreview, 200));
+  if (n2) n2.addEventListener('input', debounce(updateCoupleHiraganaPreview, 200));
+
+  const previewBtn = document.getElementById('previewCoupleBtn');
+  if (previewBtn) {
+    previewBtn.addEventListener('click', () => {
+      const v1 = document.getElementById('coupleName1').value.trim();
+      const v2 = document.getElementById('coupleName2').value.trim();
+      if (!v1 || !v2) {
+        alert('Please enter both names.');
+        return;
+      }
+      generateCoupleReadingPdf(v1, v2);
+    });
+  }
+
+  const buyBtn = document.getElementById('buyCoupleBtn');
+  if (buyBtn) {
+    buyBtn.addEventListener('click', () => {
+      const v1 = document.getElementById('coupleName1').value.trim();
+      const v2 = document.getElementById('coupleName2').value.trim();
+      trackEvent('couple_pdf_buy_click', { name1: v1, name2: v2 });
+    });
+  }
+}
+
 // --- CTA フォーム ---
 function initCTA() {
   const form = document.getElementById('ctaForm');
@@ -1045,4 +1200,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initShareButtons();
   initCTA();
   initPdfButtons();
+  initCoupleButtons();
 });

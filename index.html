@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="google" content="notranslate">
   <meta http-equiv="Content-Language" content="en">
+  <meta name="google-site-verification" content="XY-3VGkUcy3Dh2KWjH8SZqyPqoHc-SNImJbVlp2oLx4" />
   <title>Kotodama — Discover the Spirit of Your Name</title>
   <!-- Google Analytics 4 — Replace G-XXXXXXXXXX with your Measurement ID -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -107,7 +108,7 @@
         <div class="pdf-cta-buttons">
           <button id="previewPdfBtn" class="generate-btn pdf-preview-btn">Preview Free PDF</button>
           <!-- TODO: Replace href with your Gumroad product URL after creating the product -->
-          <a id="buyPdfBtn" class="generate-btn pdf-buy-btn" href="https://gumroad.com/" target="_blank" rel="noopener">Get Premium Reading — $11</a>
+          <a id="buyPdfBtn" class="generate-btn pdf-buy-btn" href="https://gumroad.com/" target="_blank" rel="noopener">Get Premium Reading — $19</a>
         </div>
       </div>
 
@@ -122,6 +123,41 @@
       </div>
     </div>
 
+  </section>
+
+  <!-- Couple/Family Reading Section (Premium SKU $35) -->
+  <section id="coupleReadingSection" class="couple-reading-section">
+    <div class="couple-reading-inner">
+      <h2 class="couple-heading">Reading for Two</h2>
+      <p class="couple-tagline">Discover the kotodama resonance between two souls — perfect for couples, family, and gifts.</p>
+
+      <div class="couple-inputs">
+        <div class="input-group">
+          <label class="input-label">First name</label>
+          <input type="text" id="coupleName1" class="name-input" placeholder="e.g. Michael" autocomplete="off">
+          <div id="coupleHiragana1" class="romaji-preview"></div>
+        </div>
+        <div class="couple-and">&amp;</div>
+        <div class="input-group">
+          <label class="input-label">Second name</label>
+          <input type="text" id="coupleName2" class="name-input" placeholder="e.g. Sophia" autocomplete="off">
+          <div id="coupleHiragana2" class="romaji-preview"></div>
+        </div>
+      </div>
+
+      <div class="cta-section pdf-cta couple-cta">
+        <h3 class="cta-heading">Couple Kotodama Reading PDF</h3>
+        <p class="cta-hint pdf-cta-desc">A 2-page PDF with both names, individual kotodama meanings, and the unique resonance between you.</p>
+        <div class="pdf-cta-buttons">
+          <button id="previewCoupleBtn" class="generate-btn pdf-preview-btn">Preview Free Couple PDF</button>
+          <!-- TODO: Replace href with your Gumroad couple-product URL after creating it -->
+          <a id="buyCoupleBtn" class="generate-btn pdf-buy-btn" href="https://gumroad.com/" target="_blank" rel="noopener">Get Couple Reading — $35</a>
+        </div>
+      </div>
+
+      <canvas id="coupleCardCanvas1" width="1080" height="1080" style="display:none;"></canvas>
+      <canvas id="coupleCardCanvas2" width="1080" height="1080" style="display:none;"></canvas>
+    </div>
   </section>
 
   <script src="name-dictionary.js"></script>
