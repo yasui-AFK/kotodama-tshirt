@@ -1349,3 +1349,233 @@ body {
   padding: 0.7rem 1.2rem;
   font-size: 0.85rem;
 }
+
+/* ========================================
+   Product Visuals Section ("This is what arrives")
+   ======================================== */
+.product-visuals {
+  max-width: 1180px;
+  margin: 0 auto 4rem;
+  padding: 1rem 1.5rem 3rem;
+  text-align: center;
+}
+
+.product-visuals-mark {
+  font-size: 0.85rem;
+  color: var(--accent-red);
+  opacity: 0.5;
+  margin-bottom: 1rem;
+  letter-spacing: 0.5em;
+}
+
+.product-visuals-heading {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.85rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.005em;
+}
+
+.product-visuals-sub {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 300;
+  margin-bottom: 3rem;
+  font-style: italic;
+}
+
+.visual-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.2rem;
+  align-items: start;
+}
+
+.visual-item {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.visual-img {
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 10px 28px rgba(0, 0, 0, 0.10);
+  margin-bottom: 1.3rem;
+  background: #fffefa;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.visual-item:hover .visual-img {
+  transform: translateY(-5px);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 18px 40px rgba(0, 0, 0, 0.16);
+}
+
+.visual-tag {
+  display: inline-block;
+  font-family: 'Noto Serif JP', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.04em;
+}
+
+.visual-desc {
+  font-size: 0.86rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+  font-weight: 300;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+@media (max-width: 880px) {
+  .visual-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 540px) {
+  .product-visuals {
+    padding: 1rem 1.5rem 2rem;
+  }
+  .product-visuals-heading {
+    font-size: 1.5rem;
+  }
+}
+
+/* ========================================
+   SKU Thumbnail (商品サムネ)
+   ======================================== */
+.sku-thumb {
+  display: block;
+  width: 100%;
+  max-width: 150px;
+  height: auto;
+  margin: 0 auto 1.1rem;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
+  background: #fffefa;
+  border-radius: 3px;
+  transition: transform 0.3s ease;
+}
+
+.sku-card:hover .sku-thumb {
+  transform: translateY(-3px);
+}
+
+/* ========================================
+   Testimonials Section
+   ======================================== */
+.testimonials {
+  max-width: 1080px;
+  margin: 0 auto 4rem;
+  padding: 1rem 1.5rem 2rem;
+  text-align: center;
+}
+
+.testimonials-mark {
+  font-size: 0.85rem;
+  color: var(--accent-red);
+  opacity: 0.5;
+  margin-bottom: 1rem;
+  letter-spacing: 0.5em;
+}
+
+.testimonials-heading {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.45rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.testimonials-sub {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  font-weight: 300;
+  margin-bottom: 2.5rem;
+  font-style: italic;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2.5rem;
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.testimonial-card {
+  background: rgba(255, 255, 250, 0.55);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius);
+  padding: 2rem 1.6rem 1.5rem;
+  text-align: left;
+  position: relative;
+  backdrop-filter: blur(8px);
+}
+
+.testimonial-card::before {
+  content: '\201C';
+  position: absolute;
+  top: -1.2rem;
+  left: 1.2rem;
+  font-family: 'Dancing Script', cursive;
+  font-size: 4.2rem;
+  color: var(--accent-red);
+  opacity: 0.35;
+  line-height: 1;
+}
+
+.testimonial-quote {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text);
+  font-weight: 300;
+  font-style: italic;
+  margin-bottom: 1.2rem;
+}
+
+.testimonial-author {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  font-weight: 500;
+  text-transform: uppercase;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding-top: 0.9rem;
+}
+
+@media (max-width: 880px) {
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    margin: 0 auto;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 540px) {
+  .testimonials {
+    padding: 1rem 1.25rem 1.5rem;
+  }
+  .testimonials-heading {
+    font-size: 1.25rem;
+  }
+}

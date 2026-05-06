@@ -14,3 +14,11 @@ marketing/
 .playwright-mcp/
 test-images/
 kotodama-site-test-*.png
+
+# 競合調査・ローカル確認用スクショ（リポに含めない）
+birthdate-*.png
+tatcha-*.png
+pattern-*.png
+etsy-*.png
+our-site-*.png
+local-*.png
