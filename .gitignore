@@ -6,3 +6,11 @@ design-viral-validation.md
 Na_言霊シート*
 kotodama-data.json
 .DS_Store
+
+# 内部マーケ資料（VoC等）
+marketing/
+
+# テスト出力・キャッシュ
+.playwright-mcp/
+test-images/
+kotodama-site-test-*.png

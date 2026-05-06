@@ -26,9 +26,83 @@
   <!-- Header -->
   <header class="header">
     <h1>Kotodama</h1>
-    <p>Discover the hidden meaning of your name in Japanese</p>
+    <p>The ancient art of finding the spirit hidden in your name.</p>
     <img src="logo.png" alt="Kotodama" class="header-logo">
   </header>
+
+  <!-- Hero Hook Section -->
+  <section class="hero-hook">
+    <div class="hero-hook-inner">
+      <h2 class="hero-headline">
+        Every name carries a hidden poetry.<br>
+        Yours has been waiting <em>1,500 years</em> to be heard.
+      </h2>
+      <p class="hero-subline">
+        In the Japanese tradition of <em>kotodama</em>, every sound is a living spirit.<br>
+        Type your name, and discover the story written into it &mdash; sound by sound.
+      </p>
+
+      <div class="hero-benefits">
+        <div class="benefit-item">
+          <div class="benefit-icon">◆</div>
+          <h3>Sacred sound, not translation</h3>
+          <p>Your name reborn through the ancient breath of Japanese phonetics.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">◆</div>
+          <h3>Crafted in 60 seconds</h3>
+          <p>Free instantly. Your hiragana, your meanings, your story &mdash; all yours.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">◆</div>
+          <h3>A keepsake worth printing</h3>
+          <p>Beautifully designed PDFs and gift editions for the people you love most.</p>
+        </div>
+      </div>
+
+      <a href="#nameInput" class="hero-cta-btn">Begin with your name ↓</a>
+    </div>
+  </section>
+
+  <!-- SKU Showcase Section -->
+  <section class="sku-showcase">
+    <div class="sku-showcase-inner">
+      <h2 class="sku-section-heading">Choose your kotodama</h2>
+      <p class="sku-section-sub">From a free sample to a heirloom keepsake &mdash; your name, in four ways.</p>
+
+      <div class="sku-cards">
+        <a href="#nameInput" class="sku-card sku-card-free">
+          <div class="sku-price">Free</div>
+          <h3 class="sku-title">Free Sample Reading</h3>
+          <p class="sku-copy">A taste of your kotodama &mdash; your first three sounds, instantly.</p>
+          <span class="sku-cta">Try free ↓</span>
+        </a>
+
+        <a href="#pdfCtaSection" class="sku-card sku-card-personal">
+          <div class="sku-badge">Most Popular</div>
+          <div class="sku-price">$19</div>
+          <h3 class="sku-title">Personal Reading PDF</h3>
+          <p class="sku-copy">Your complete reading &mdash; every sound, full meanings, your story. Beautifully designed, instantly delivered.</p>
+          <span class="sku-cta">Get yours →</span>
+        </a>
+
+        <a href="#coupleReadingSection" class="sku-card sku-card-couple">
+          <div class="sku-price">$35</div>
+          <h3 class="sku-title">Reading for Two</h3>
+          <p class="sku-copy">Two souls, one resonance. Both names, their meanings, and the bond between them.</p>
+          <span class="sku-cta">Read together →</span>
+        </a>
+
+        <a href="#giftEditionSection" class="sku-card sku-card-gift">
+          <div class="sku-badge sku-badge-red">Intro Offer</div>
+          <div class="sku-price"><span class="sku-price-anchor">$79</span> $49</div>
+          <h3 class="sku-title">Gift Edition</h3>
+          <p class="sku-copy">The full reading + printable poster + dedication page for someone you love.</p>
+          <span class="sku-cta">Send a gift →</span>
+        </a>
+      </div>
+    </div>
+  </section>
 
   <!-- Input Section -->
   <section class="input-section">
@@ -103,12 +177,12 @@
 
       <!-- PDF Reading CTA (Primary revenue product) -->
       <div id="pdfCtaSection" class="cta-section pdf-cta">
-        <h3 class="cta-heading">Get Your Personal Kotodama Reading PDF</h3>
-        <p class="cta-hint pdf-cta-desc">A beautifully designed 1-page PDF with your name, hiragana, full kotodama meanings, and your unique story. Instantly delivered.</p>
+        <h3 class="cta-heading">Your Personal Kotodama Reading</h3>
+        <p class="cta-hint pdf-cta-desc">A beautifully designed multi-page PDF with every sound, full meanings, your personal story, and a print-ready poster. Instantly delivered.</p>
         <div class="pdf-cta-buttons">
-          <button id="previewPdfBtn" class="generate-btn pdf-preview-btn">Preview Free PDF</button>
+          <button id="previewPdfBtn" class="generate-btn pdf-preview-btn">Get Free Sample (3 sounds)</button>
           <!-- TODO: Replace href with your Gumroad product URL after creating the product -->
-          <a id="buyPdfBtn" class="generate-btn pdf-buy-btn" href="https://gumroad.com/" target="_blank" rel="noopener">Get Premium Reading — $19</a>
+          <a id="buyPdfBtn" class="generate-btn pdf-buy-btn" href="https://gumroad.com/" target="_blank" rel="noopener">Get Full Reading — $19</a>
         </div>
       </div>
 
@@ -160,7 +234,110 @@
     </div>
   </section>
 
-  <script src="name-dictionary.js"></script>
-  <script src="app.js"></script>
+  <!-- Hidden poster canvas (high-res, used by Personal/Gift PDF generators) -->
+  <canvas id="posterCanvas" width="2160" height="2160" style="display:none;"></canvas>
+
+  <!-- Admin section (運用ツール — Gumroad 注文後の手動 PDF 生成) -->
+  <section id="adminSection" class="admin-section hidden">
+    <div class="admin-inner">
+      <h2 class="admin-heading">⚙ Admin — PDF Fulfillment</h2>
+      <p class="admin-note">Gumroad 注文ごとに、購入者の名前を入力 → 該当 SKU の PDF を生成 → メールで配信する運用ツール。一般訪問者には表示されない（URL に <code>?admin=1</code> を付けた時のみ表示）。</p>
+
+      <div class="admin-fields">
+        <div class="input-group">
+          <label class="input-label">Customer Name (recipient for Personal / $19, $35, $49)</label>
+          <input type="text" id="adminCustomerName" class="name-input" placeholder="e.g. Sophia" autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Second Name (Couple $35 only)</label>
+          <input type="text" id="adminSecondName" class="name-input" placeholder="e.g. Michael" autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Sender Name (Gift $49 only)</label>
+          <input type="text" id="adminSenderName" class="name-input" placeholder="e.g. James" autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Personal Note (Gift $49 only, optional)</label>
+          <textarea id="adminGiftNote" class="name-input" rows="2" placeholder="A few words from the giver..."></textarea>
+        </div>
+      </div>
+
+      <div class="admin-buttons">
+        <button id="adminGenPersonalBtn" class="generate-btn">Generate Personal Reading ($19)</button>
+        <button id="adminGenCoupleBtn" class="generate-btn">Generate Couple Reading ($35)</button>
+        <button id="adminGenGiftBtn" class="generate-btn">Generate Gift Edition ($49)</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gift Edition Section ($49 SKU) -->
+  <section id="giftEditionSection" class="gift-edition-section">
+    <div class="gift-edition-inner">
+      <div class="gift-edition-badge">Intro Offer</div>
+      <h2 class="gift-edition-heading">Gift Edition</h2>
+      <p class="gift-edition-tagline">An heirloom kotodama, made for someone you love.</p>
+
+      <div class="gift-edition-includes">
+        <h3 class="gift-includes-heading">Everything in the Personal Reading, plus:</h3>
+        <ul class="gift-includes-list">
+          <li><span class="include-mark">◆</span> A personalized dedication page <em>(&ldquo;For [name], with love from [name]&rdquo;)</em></li>
+          <li><span class="include-mark">◆</span> A print-ready poster, beautifully designed for framing</li>
+          <li><span class="include-mark">◆</span> Hand-prepared and emailed within 24 hours of your order</li>
+        </ul>
+      </div>
+
+      <div class="gift-inputs">
+        <div class="input-group">
+          <label class="input-label">For whom?</label>
+          <input type="text" id="giftRecipientName" class="name-input" placeholder="The recipient's name" autocomplete="off">
+          <div id="giftRecipientHiragana" class="romaji-preview"></div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">From whom?</label>
+          <input type="text" id="giftSenderName" class="name-input" placeholder="Your name" autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label class="input-label">A personal note <span class="label-optional">(optional)</span></label>
+          <textarea id="giftMessage" class="name-input gift-message-input" rows="3" placeholder="A few words from the heart..."></textarea>
+        </div>
+      </div>
+
+      <div class="cta-section pdf-cta gift-cta">
+        <p class="cta-fulfillment-note"><em>Each Gift Edition is hand-prepared by us and delivered to your inbox within 24 hours.</em></p>
+        <div class="pdf-cta-buttons gift-buttons">
+          <!-- TODO: Replace href with Gumroad gift-edition product URL -->
+          <a id="buyGiftBtn" class="generate-btn pdf-buy-btn gift-buy-btn" href="https://gumroad.com/" target="_blank" rel="noopener">
+            <span class="gift-price-anchor">$79</span> Send a Gift &mdash; $49
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="aboutSection" class="about-section">
+    <div class="about-inner">
+      <div class="about-mark">◆</div>
+      <h2 class="about-heading">About</h2>
+
+      <div class="about-content">
+        <p>Hello.</p>
+
+        <p>I'm Yusuke &mdash; a name that, in Japanese, means <em>&ldquo;to help, to be of use.&rdquo;</em> I built Kotodama because I felt my own name had been quietly carrying me through life, long before I learned to listen.</p>
+
+        <p>The Japanese have a word for this: <em>kotodama</em> (言霊) &mdash; &ldquo;the spirit of words.&rdquo; Every sound is alive. Names are not arbitrary. What you call yourself shapes how the world receives you &mdash; that is the old belief.</p>
+
+        <p>The reading you receive is born from a kotodama dictionary I built, sound by sound. I have woven the old Japanese interpretations and my own understanding into a single system. I am not creating the kotodama &mdash; they have always been here. I am only translating, for those who read in English.</p>
+
+        <p>Each Gift Edition is hand-prepared by me, with care, and delivered to your inbox within 24 hours of your order.</p>
+
+        <p class="about-signature">&mdash; Yusuke<br><span class="about-domain">kotodama.app</span></p>
+      </div>
+    </div>
+  </section>
+
+  <script src="name-dictionary.js?v=2"></script>
+  <script src="kotodama-deep-meanings.js?v=2"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>

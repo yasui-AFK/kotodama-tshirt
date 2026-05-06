@@ -676,6 +676,14 @@ function getEnglishMeaning(kana) {
   return ENGLISH_MEANINGS[kana] || 'Mystery — a spirit yet to be named';
 }
 
+// 深掘り解釈（$19 / $49 PDF 用）。kotodama-deep-meanings.js が定義する DEEP_MEANINGS から取得。
+// データが見つからない場合は、ENGLISH_MEANINGS の短い解釈をフォールバックとして返す。
+function getDeepMeaning(kana) {
+  const deep = (typeof window !== 'undefined' && window.DEEP_MEANINGS) ? window.DEEP_MEANINGS[kana] : null;
+  if (deep) return deep;
+  return getEnglishMeaning(kana);
+}
+
 // 背景画像プリロード
 let bgWashiImg = null;
 function loadBgImage() {
@@ -700,7 +708,9 @@ async function preloadFonts() {
 }
 
 // Bold Washi シェアカード描画
-async function renderShareCard(name, hiragana, kotodamaResults, canvasId = 'shareCardCanvas') {
+// scale 引数（既定 1）で高解像度版を生成可能。例：scale=2 で 2160x2160 のポスター品質。
+// 内部の座標・フォントサイズ計算はそのまま。ctx.scale() で全体を倍率調整する。
+async function renderShareCard(name, hiragana, kotodamaResults, canvasId = 'shareCardCanvas', scale = 1) {
   const [, bgImg] = await Promise.all([preloadFonts(), loadBgImage()]);
 
   const canvas = document.getElementById(canvasId);
@@ -709,8 +719,12 @@ async function renderShareCard(name, hiragana, kotodamaResults, canvasId = 'shar
   const W = 1080;
   const H = 1080;
 
-  canvas.width = W;
-  canvas.height = H;
+  canvas.width = W * scale;
+  canvas.height = H * scale;
+  if (scale !== 1) {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(scale, scale);
+  }
 
   const filtered = kotodamaResults.filter(k => !k.isSpecial);
   // シェアカード用ひらがな（長音記号を除去）
@@ -935,49 +949,154 @@ function initShareButtons() {
   });
 }
 
-// --- PDF Personal Reading（収益商品） ---
-// Canvas シェアカードを A4 PDF にラップ。jsPDF の日本語フォント問題を回避するため
-// ひらがな部分は Canvas 画像として埋め込む。
-async function generatePersonalReadingPdf(name) {
+// --- PDF Free Sample（リード獲得用、有料版とは別物） ---
+// 案A 方針：Free Sample は意図的に「中身を絞った」1ページ PDF。
+// シェアカード画像は埋め込まず、最初の3文字のみテキスト + 大きな $19 アップグレード CTA。
+// $19 Personal Reading PDF（有料）は Gumroad で配信し、別途 W1 で中身を充実化する。
+async function generateFreeSamplePdf(name) {
   if (!window.jspdf || !window.jspdf.jsPDF) {
     alert('PDF library not loaded. Please refresh the page.');
     return;
   }
-  const canvas = document.getElementById('shareCardCanvas');
-  if (!canvas) return;
+
+  // フォントをロードしてから Canvas 画像生成（ひらがな描画用）
+  await preloadFonts();
+
+  const reading = buildNameReading(name);
+  if (!reading || !reading.kotodamaResults) {
+    alert('Could not generate a sample for that name. Please try a different spelling.');
+    return;
+  }
+
+  const filtered = reading.kotodamaResults.filter(k => !k.isSpecial);
+  if (filtered.length === 0) {
+    alert('Could not generate a sample for that name. Please try a different spelling.');
+    return;
+  }
+  const sampleCount = Math.min(3, filtered.length);
+  const sampleChars = filtered.slice(0, sampleCount);
+  const totalChars = filtered.length;
+  const hasMore = totalChars > sampleCount;
 
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-  // ヘッダー
+  // === Header ===
   pdf.setFont('helvetica', 'bold');
   pdf.setFontSize(11);
-  pdf.setTextColor(197, 61, 67); // accent-red
+  pdf.setTextColor(197, 61, 67);
   pdf.text('K  O  T  O  D  A  M  A', 105, 18, { align: 'center' });
+
+  pdf.setFont('helvetica', 'italic');
+  pdf.setFontSize(9);
+  pdf.setTextColor(122, 110, 88);
+  pdf.text('Free Sample Reading', 105, 24, { align: 'center' });
+
+  pdf.setDrawColor(197, 61, 67);
+  pdf.setLineWidth(0.3);
+  pdf.line(85, 30, 125, 30);
+
+  // === Name (English, large) ===
+  pdf.setFont('helvetica', 'bold');
+  const nameUpper = name.toUpperCase();
+  let nameFontSize = 36;
+  if (nameUpper.length > 10) nameFontSize = 28;
+  if (nameUpper.length > 14) nameFontSize = 22;
+  pdf.setFontSize(nameFontSize);
+  pdf.setTextColor(26, 26, 26);
+  pdf.text(nameUpper, 105, 55, { align: 'center' });
+
+  // === Hiragana sample (rendered via Canvas due to jsPDF font limitation) ===
+  const sampleHiragana = sampleChars.map(k => k.kana).join('') + (hasMore ? ' …' : '');
+  const hiraganaCanvas = document.createElement('canvas');
+  hiraganaCanvas.width = 1200;
+  hiraganaCanvas.height = 200;
+  const hctx = hiraganaCanvas.getContext('2d');
+  hctx.fillStyle = 'rgba(255,255,255,0)';
+  hctx.fillRect(0, 0, 1200, 200);
+  hctx.font = '500 110px "Noto Serif JP"';
+  hctx.fillStyle = '#3a3024';
+  hctx.textAlign = 'center';
+  hctx.textBaseline = 'middle';
+  hctx.fillText(sampleHiragana, 600, 100);
+  pdf.addImage(hiraganaCanvas.toDataURL('image/png'), 'PNG', 50, 65, 110, 18);
+
+  // Divider
+  pdf.setDrawColor(197, 61, 67);
+  pdf.setLineWidth(0.4);
+  pdf.line(95, 95, 115, 95);
+
+  // === Section label ===
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(8);
+  pdf.setTextColor(122, 110, 88);
+  pdf.text('FIRST THREE SOUNDS', 105, 105, { align: 'center' });
+
+  // === Sample meanings (kana rendered via canvas, meaning as text) ===
+  let yPos = 118;
+  for (let i = 0; i < sampleChars.length; i++) {
+    const k = sampleChars[i];
+    const kanaCanvas = document.createElement('canvas');
+    kanaCanvas.width = 200;
+    kanaCanvas.height = 100;
+    const kctx = kanaCanvas.getContext('2d');
+    kctx.fillStyle = 'rgba(255,255,255,0)';
+    kctx.fillRect(0, 0, 200, 100);
+    kctx.font = '600 60px "Noto Serif JP"';
+    kctx.fillStyle = '#1a1a1a';
+    kctx.textAlign = 'center';
+    kctx.textBaseline = 'middle';
+    kctx.fillText(k.kana, 100, 50);
+    pdf.addImage(kanaCanvas.toDataURL('image/png'), 'PNG', 55, yPos - 7, 14, 8);
+
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(11);
+    pdf.setTextColor(58, 48, 36);
+    pdf.text(getEnglishMeaning(k.kana), 78, yPos);
+
+    yPos += 12;
+  }
+
+  // === CTA Box ===
+  const ctaY = 175;
+  pdf.setFillColor(245, 235, 215);
+  pdf.setDrawColor(197, 61, 67);
+  pdf.setLineWidth(0.5);
+  pdf.roundedRect(30, ctaY, 150, 60, 3, 3, 'FD');
+
+  pdf.setFont('helvetica', 'italic');
+  pdf.setFontSize(10);
+  pdf.setTextColor(122, 110, 88);
+  if (hasMore) {
+    pdf.text(`This is a free preview — your name has ${totalChars} sacred sounds in total.`, 105, ctaY + 11, { align: 'center' });
+  } else {
+    pdf.text('This is a free preview of your kotodama reading.', 105, ctaY + 11, { align: 'center' });
+  }
+
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(15);
+  pdf.setTextColor(197, 61, 67);
+  pdf.text('Unlock the full reading — $19', 105, ctaY + 27, { align: 'center' });
 
   pdf.setFont('helvetica', 'normal');
   pdf.setFontSize(9);
   pdf.setTextColor(122, 110, 88);
-  pdf.text('Personal Reading', 105, 24, { align: 'center' });
+  pdf.text('All sounds · deep meanings · personal story · printable poster', 105, ctaY + 38, { align: 'center' });
 
-  // メインビジュアル（既存シェアカード Canvas を中央に配置）
-  const imgData = canvas.toDataURL('image/png');
-  const imgSize = 170; // mm
-  const x = (210 - imgSize) / 2;
-  const y = 35;
-  pdf.addImage(imgData, 'PNG', x, y, imgSize, imgSize);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(10);
+  pdf.setTextColor(139, 105, 20);
+  pdf.text('Visit kotodama.app', 105, ctaY + 50, { align: 'center' });
 
-  // フッター
-  pdf.setFontSize(8);
-  pdf.setTextColor(150, 140, 120);
-  pdf.text(`A unique reading for ${name}`, 105, 225, { align: 'center' });
-
+  // === Footer ===
+  pdf.setFont('helvetica', 'normal');
   pdf.setFontSize(7);
+  pdf.setTextColor(150, 140, 120);
   pdf.text('kotodama.app  ·  The spirit of your name', 105, 285, { align: 'center' });
 
-  pdf.save(`kotodama-${name.toLowerCase().replace(/\s+/g, '-')}-reading.pdf`);
+  pdf.save(`kotodama-${name.toLowerCase().replace(/\s+/g, '-')}-sample.pdf`);
 
-  trackEvent('pdf_preview_download', { name_input: name });
+  trackEvent('free_sample_pdf_download', { name_input: name, total_chars: totalChars });
 }
 
 function initPdfButtons() {
@@ -989,7 +1108,7 @@ function initPdfButtons() {
         alert('Please enter your name first.');
         return;
       }
-      generatePersonalReadingPdf(name);
+      generateFreeSamplePdf(name);
     });
   }
 
@@ -998,6 +1117,346 @@ function initPdfButtons() {
     buyBtn.addEventListener('click', () => {
       const name = document.getElementById('nameInput').value.trim();
       trackEvent('pdf_buy_click', { name_input: name });
+    });
+  }
+}
+
+// --- Full PDF builders ($19 / $49 SKU、admin モードで Yusuke が手動配信用に使う） ---
+// 共通ヘッダー描画
+function drawPdfHeader(pdf, subtitle) {
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(11);
+  pdf.setTextColor(197, 61, 67);
+  pdf.text('K  O  T  O  D  A  M  A', 105, 18, { align: 'center' });
+  if (subtitle) {
+    pdf.setFont('helvetica', 'italic');
+    pdf.setFontSize(9);
+    pdf.setTextColor(122, 110, 88);
+    pdf.text(subtitle, 105, 24, { align: 'center' });
+  }
+  pdf.setDrawColor(197, 61, 67);
+  pdf.setLineWidth(0.3);
+  pdf.line(85, 30, 125, 30);
+}
+
+// 共通フッター描画
+function drawPdfFooter(pdf, customNote) {
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(7);
+  pdf.setTextColor(150, 140, 120);
+  if (customNote) {
+    pdf.text(customNote, 105, 282, { align: 'center' });
+  }
+  pdf.text('kotodama.app  ·  The spirit of your name', 105, 290, { align: 'center' });
+}
+
+// ひらがなを Canvas でレンダリングして dataURL を返す（jsPDF 日本語非対応の回避）
+function renderHiraganaToImage(text, canvasW, canvasH, fontSize, color = '#3a3024') {
+  const c = document.createElement('canvas');
+  c.width = canvasW;
+  c.height = canvasH;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = 'rgba(255,255,255,0)';
+  ctx.fillRect(0, 0, canvasW, canvasH);
+  ctx.font = `500 ${fontSize}px "Noto Serif JP"`;
+  ctx.fillStyle = color;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, canvasW / 2, canvasH / 2);
+  return c.toDataURL('image/png');
+}
+
+// 各音の深掘り解釈ページを描画（複数ページにまたがる場合は自動改ページ）
+function drawSoundsSection(pdf, filtered, opts = {}) {
+  const subtitle = opts.subtitle || 'The Spirit of Each Sound';
+  const startY = 38;
+  const pageMaxY = 268;
+  const colKana = 22;
+  const colText = 40;
+  const textWidth = 150;
+
+  drawPdfHeader(pdf, subtitle);
+  let y = startY;
+  let firstOnPage = true;
+
+  for (let idx = 0; idx < filtered.length; idx++) {
+    const k = filtered[idx];
+    const deep = getDeepMeaning(k.kana);
+    const wrapped = pdf.splitTextToSize(deep, textWidth);
+    const blockHeight = 4 + wrapped.length * 4.5 + 6;
+
+    if (!firstOnPage && y + blockHeight > pageMaxY) {
+      drawPdfFooter(pdf);
+      pdf.addPage();
+      drawPdfHeader(pdf, `${subtitle} (continued)`);
+      y = startY;
+      firstOnPage = true;
+    }
+    firstOnPage = false;
+
+    // ひらがなアイコン（左）
+    const kanaImg = renderHiraganaToImage(k.kana, 200, 200, 110, '#1a1a1a');
+    pdf.addImage(kanaImg, 'PNG', colKana - 7, y - 6, 14, 14);
+
+    // 英訳（一行）
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(11);
+    pdf.setTextColor(58, 48, 36);
+    pdf.text(getEnglishMeaning(k.kana), colText, y);
+
+    // 深掘り段落
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(9.5);
+    pdf.setTextColor(80, 70, 55);
+    pdf.text(wrapped, colText, y + 5);
+
+    y += 4 + wrapped.length * 4.5 + 7;
+  }
+  drawPdfFooter(pdf);
+}
+
+// === $19 Personal Reading PDF（フル版、マルチページ） ===
+async function generateFullPersonalPdf(name) {
+  if (!window.jspdf || !window.jspdf.jsPDF) { alert('PDF library not loaded.'); return; }
+  await preloadFonts();
+
+  const reading = buildNameReading(name);
+  if (!reading || !reading.kotodamaResults) {
+    alert('Could not build a reading for that name.'); return;
+  }
+  const filtered = reading.kotodamaResults.filter(k => !k.isSpecial);
+  if (filtered.length === 0) { alert('No readable sounds in that name.'); return; }
+
+  // 高解像度ポスター用シェアカードを posterCanvas にレンダリング
+  await renderShareCard(reading.name, reading.hiragana, reading.kotodamaResults, 'posterCanvas', 2);
+  const posterImg = document.getElementById('posterCanvas').toDataURL('image/png');
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  // === PAGE 1: COVER ===
+  drawPdfHeader(pdf, 'Personal Reading');
+
+  // 名前（英語、大）
+  pdf.setFont('helvetica', 'bold');
+  let nameFontSize = 38;
+  if (name.length > 10) nameFontSize = 30;
+  if (name.length > 14) nameFontSize = 23;
+  pdf.setFontSize(nameFontSize);
+  pdf.setTextColor(26, 26, 26);
+  pdf.text(name.toUpperCase(), 105, 60, { align: 'center' });
+
+  // ひらがな（中央、大）
+  const cleanHiragana = filtered.map(k => k.kana).join('');
+  const hiraImg = renderHiraganaToImage(cleanHiragana, 1600, 220, 100);
+  pdf.addImage(hiraImg, 'PNG', 35, 72, 140, 19);
+
+  // 装飾区切り
+  pdf.setDrawColor(197, 61, 67);
+  pdf.setLineWidth(0.5);
+  pdf.line(90, 102, 120, 102);
+
+  // ストーリー
+  const story = generateStory(reading.name, reading.kotodamaResults);
+  if (story) {
+    pdf.setFont('helvetica', 'italic');
+    pdf.setFontSize(11.5);
+    pdf.setTextColor(74, 63, 48);
+    const wrapped = pdf.splitTextToSize(story, 160);
+    pdf.text(wrapped, 105, 118, { align: 'center' });
+  }
+
+  // 「Each sound has been carefully considered...」リード文
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(9.5);
+  pdf.setTextColor(122, 110, 88);
+  const intro = pdf.splitTextToSize(
+    'On the pages that follow, you will find each sound of your name, with its hidden meaning unfolded — as the old Japanese tradition of kotodama would have it heard.',
+    160
+  );
+  pdf.text(intro, 105, 220, { align: 'center' });
+
+  drawPdfFooter(pdf, `A reading prepared for ${name}.`);
+
+  // === PAGE 2+: DEEP MEANINGS ===
+  pdf.addPage();
+  drawSoundsSection(pdf, filtered);
+
+  // === FINAL PAGE: POSTER ===
+  pdf.addPage();
+  drawPdfHeader(pdf, 'Your Kotodama, to print and frame');
+  pdf.addImage(posterImg, 'PNG', 22, 38, 166, 166);
+  pdf.setFont('helvetica', 'italic');
+  pdf.setFontSize(10);
+  pdf.setTextColor(122, 110, 88);
+  pdf.text('A keepsake to print and frame.', 105, 215, { align: 'center' });
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(9);
+  pdf.text('Recommended: A4 paper at 100% scale, or an 8×8 inch square frame.', 105, 222, { align: 'center' });
+  drawPdfFooter(pdf);
+
+  pdf.save(`kotodama-${name.toLowerCase().replace(/\s+/g, '-')}-personal-reading.pdf`);
+  trackEvent('admin_personal_pdf_generated', { name });
+}
+
+// === $49 Gift Edition PDF（献呈ページ + Personal の全構造） ===
+async function generateGiftEditionPdf(recipientName, senderName, note) {
+  if (!window.jspdf || !window.jspdf.jsPDF) { alert('PDF library not loaded.'); return; }
+  await preloadFonts();
+
+  const reading = buildNameReading(recipientName);
+  if (!reading || !reading.kotodamaResults) { alert('Could not build a reading for that name.'); return; }
+  const filtered = reading.kotodamaResults.filter(k => !k.isSpecial);
+  if (filtered.length === 0) { alert('No readable sounds in that name.'); return; }
+
+  await renderShareCard(reading.name, reading.hiragana, reading.kotodamaResults, 'posterCanvas', 2);
+  const posterImg = document.getElementById('posterCanvas').toDataURL('image/png');
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  // === PAGE 1: DEDICATION ===
+  drawPdfHeader(pdf, 'Gift Edition');
+
+  pdf.setFont('helvetica', 'italic');
+  pdf.setFontSize(13);
+  pdf.setTextColor(122, 110, 88);
+  pdf.text('For', 105, 78, { align: 'center' });
+
+  pdf.setFont('helvetica', 'bold');
+  let recipFontSize = 30;
+  if (recipientName.length > 10) recipFontSize = 24;
+  if (recipientName.length > 14) recipFontSize = 19;
+  pdf.setFontSize(recipFontSize);
+  pdf.setTextColor(197, 61, 67);
+  pdf.text(recipientName, 105, 98, { align: 'center' });
+
+  pdf.setFont('helvetica', 'italic');
+  pdf.setFontSize(13);
+  pdf.setTextColor(122, 110, 88);
+  pdf.text('with love from', 105, 118, { align: 'center' });
+
+  pdf.setFont('helvetica', 'bold');
+  let sendFontSize = 22;
+  if (senderName.length > 10) sendFontSize = 18;
+  if (senderName.length > 14) sendFontSize = 15;
+  pdf.setFontSize(sendFontSize);
+  pdf.setTextColor(26, 26, 26);
+  pdf.text(senderName, 105, 135, { align: 'center' });
+
+  pdf.setDrawColor(197, 61, 67);
+  pdf.setLineWidth(0.4);
+  pdf.line(85, 150, 125, 150);
+
+  if (note && note.length > 0) {
+    pdf.setFont('helvetica', 'italic');
+    pdf.setFontSize(11);
+    pdf.setTextColor(74, 63, 48);
+    const wrapped = pdf.splitTextToSize(note, 140);
+    pdf.text(wrapped, 105, 168, { align: 'center' });
+  }
+
+  pdf.setFont('helvetica', 'italic');
+  pdf.setFontSize(9.5);
+  pdf.setTextColor(122, 110, 88);
+  pdf.text('A kotodama reading, hand-prepared for someone you love.', 105, 230, { align: 'center' });
+
+  drawPdfFooter(pdf);
+
+  // === PAGE 2: COVER (本編リーディングのカバー) ===
+  pdf.addPage();
+  drawPdfHeader(pdf, 'Personal Reading');
+
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(recipFontSize);
+  pdf.setTextColor(26, 26, 26);
+  pdf.text(recipientName.toUpperCase(), 105, 60, { align: 'center' });
+
+  const cleanHiragana = filtered.map(k => k.kana).join('');
+  const hiraImg = renderHiraganaToImage(cleanHiragana, 1600, 220, 100);
+  pdf.addImage(hiraImg, 'PNG', 35, 72, 140, 19);
+
+  pdf.setDrawColor(197, 61, 67);
+  pdf.setLineWidth(0.5);
+  pdf.line(90, 102, 120, 102);
+
+  const story = generateStory(reading.name, reading.kotodamaResults);
+  if (story) {
+    pdf.setFont('helvetica', 'italic');
+    pdf.setFontSize(11.5);
+    pdf.setTextColor(74, 63, 48);
+    const wrapped = pdf.splitTextToSize(story, 160);
+    pdf.text(wrapped, 105, 118, { align: 'center' });
+  }
+
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(9.5);
+  pdf.setTextColor(122, 110, 88);
+  const intro = pdf.splitTextToSize(
+    'On the pages that follow, you will find each sound of your name, with its hidden meaning unfolded — as the old Japanese tradition of kotodama would have it heard.',
+    160
+  );
+  pdf.text(intro, 105, 220, { align: 'center' });
+
+  drawPdfFooter(pdf, `A reading prepared for ${recipientName}.`);
+
+  // === PAGE 3+: DEEP MEANINGS ===
+  pdf.addPage();
+  drawSoundsSection(pdf, filtered);
+
+  // === FINAL PAGE: POSTER ===
+  pdf.addPage();
+  drawPdfHeader(pdf, 'Your Kotodama, to print and frame');
+  pdf.addImage(posterImg, 'PNG', 22, 38, 166, 166);
+  pdf.setFont('helvetica', 'italic');
+  pdf.setFontSize(10);
+  pdf.setTextColor(122, 110, 88);
+  pdf.text('A keepsake to print and frame.', 105, 215, { align: 'center' });
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(9);
+  pdf.text('Recommended: A4 paper at 100% scale, or an 8×8 inch square frame.', 105, 222, { align: 'center' });
+  drawPdfFooter(pdf);
+
+  pdf.save(`kotodama-${recipientName.toLowerCase().replace(/\s+/g, '-')}-gift-edition.pdf`);
+  trackEvent('admin_gift_pdf_generated', { recipient: recipientName, sender: senderName });
+}
+
+// === Admin モード（URL ?admin=1 のときに有効化） ===
+function initAdminMode() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('admin') !== '1') return;
+
+  const adminSection = document.getElementById('adminSection');
+  if (!adminSection) return;
+  adminSection.classList.remove('hidden');
+
+  const personalBtn = document.getElementById('adminGenPersonalBtn');
+  if (personalBtn) {
+    personalBtn.addEventListener('click', () => {
+      const name = document.getElementById('adminCustomerName').value.trim();
+      if (!name) return alert('Customer name is required.');
+      generateFullPersonalPdf(name);
+    });
+  }
+
+  const coupleBtn = document.getElementById('adminGenCoupleBtn');
+  if (coupleBtn) {
+    coupleBtn.addEventListener('click', () => {
+      const n1 = document.getElementById('adminCustomerName').value.trim();
+      const n2 = document.getElementById('adminSecondName').value.trim();
+      if (!n1 || !n2) return alert('Both names are required for couple reading.');
+      generateCoupleReadingPdf(n1, n2);
+    });
+  }
+
+  const giftBtn = document.getElementById('adminGenGiftBtn');
+  if (giftBtn) {
+    giftBtn.addEventListener('click', () => {
+      const recipient = document.getElementById('adminCustomerName').value.trim();
+      const sender = document.getElementById('adminSenderName').value.trim();
+      const note = document.getElementById('adminGiftNote').value.trim();
+      if (!recipient || !sender) return alert('Recipient and sender names are required.');
+      generateGiftEditionPdf(recipient, sender, note);
     });
   }
 }
@@ -1157,6 +1616,35 @@ function initCoupleButtons() {
   }
 }
 
+// --- Gift Edition ($49 SKU、Gumroad 経由 + Yusuke 手動配信） ---
+function updateGiftRecipientHiraganaPreview() {
+  const name = document.getElementById('giftRecipientName').value.trim();
+  const preview = document.getElementById('giftRecipientHiragana');
+  if (!preview) return;
+  preview.textContent = name ? `→ ${romajiToHiragana(convertName(name).romaji)}` : '';
+}
+
+function initGiftButtons() {
+  const recipient = document.getElementById('giftRecipientName');
+  if (recipient) {
+    recipient.addEventListener('input', debounce(updateGiftRecipientHiraganaPreview, 200));
+  }
+
+  const buyBtn = document.getElementById('buyGiftBtn');
+  if (buyBtn) {
+    buyBtn.addEventListener('click', () => {
+      const recipientName = document.getElementById('giftRecipientName').value.trim();
+      const senderName = document.getElementById('giftSenderName').value.trim();
+      const message = document.getElementById('giftMessage').value.trim();
+      trackEvent('gift_buy_click', {
+        recipient_name: recipientName,
+        sender_name: senderName,
+        has_message: message.length > 0,
+      });
+    });
+  }
+}
+
 // --- CTA フォーム ---
 function initCTA() {
   const form = document.getElementById('ctaForm');
@@ -1201,4 +1689,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initCTA();
   initPdfButtons();
   initCoupleButtons();
+  initGiftButtons();
+  initAdminMode();
 });
