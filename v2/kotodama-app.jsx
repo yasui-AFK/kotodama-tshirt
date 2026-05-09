@@ -64,17 +64,24 @@ function Products({ theme, name, reading, onPick }) {
   );
 }
 
-function PDP({ theme, product, name, reading, onAdd, onBack }) {
-  const [size, setSize] = useStateK2(product.sizes ? product.sizes[Math.floor(product.sizes.length / 2)] : null);
-  const [color, setColor] = useStateK2(product.colors ? product.colors[0] : null);
-  const [position, setPosition] = useStateK2('chest');
-  const [layout, setLayout] = useStateK2('vertical');
-  const [added, setAdded] = useStateK2(false);
+function PDP({ theme, product, name, reading, onBack }) {
+  const [secondName, setSecondName] = useStateK2('');
+  const [senderName, setSenderName] = useStateK2('');
+  const [dedication, setDedication] = useStateK2('');
 
-  const handleAdd = () => {
-    onAdd({ ...product, _opts: { size, color, position, layout } });
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1800);
+  const handleBuyClick = () => {
+    if (window.trackEvent) {
+      const eventName = product.id === 'personal' ? 'pdf_buy_click'
+                      : product.id === 'couple' ? 'couple_pdf_buy_click'
+                      : 'gift_buy_click';
+      window.trackEvent(eventName, { name_input: name });
+    }
+  };
+
+  const inputStyle = {
+    width: '100%', padding: '12px 14px', fontFamily: theme.serif, fontSize: 16,
+    background: theme.bg, border: `1px solid ${theme.line}`, color: theme.fg,
+    outline: 'none', borderRadius: 0,
   };
 
   return (
@@ -87,35 +94,29 @@ function PDP({ theme, product, name, reading, onAdd, onBack }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 56, maxWidth: 1080, margin: '0 auto' }}>
         <div>
-          <div style={{ position: 'relative', background: color ? color.hex : theme.paper,
+          <div style={{ position: 'relative', background: theme.paper,
                         border: `1px solid ${theme.line}`, aspectRatio: '4/5', overflow: 'hidden' }}>
             <div style={{
               position: 'absolute', inset: 0, display: 'flex',
               alignItems: 'center', justifyContent: 'center',
-              fontFamily: theme.mono, fontSize: 10, color: theme.sub, opacity: 0.4,
+              fontFamily: theme.mono, fontSize: 10, color: theme.sub, opacity: 0.3,
               letterSpacing: '0.2em', textTransform: 'uppercase',
             }}>[ {product.placeholder} ]</div>
 
-            {reading && (
+            {reading && reading.syllables && reading.syllables.length > 0 && (
               <div style={{
-                position: 'absolute',
-                top: position === 'chest' ? '32%' : '50%',
-                left: '50%', transform: 'translate(-50%, -50%)',
+                position: 'absolute', top: '50%', left: '50%',
+                transform: 'translate(-50%, -50%)', textAlign: 'center',
               }}>
-                {layout === 'vertical' ? (
-                  <window.VerticalKana
-                    text={reading.syllables.map(s => s.kana).join('')}
-                    fontSize={48}
-                    color={color && color.hex === '#1a1814' ? '#f3ede1' : '#1a1814'}
-                  />
-                ) : (
-                  <div style={{
-                    fontFamily: theme.serif, fontSize: 56, letterSpacing: '0.08em',
-                    color: color && color.hex === '#1a1814' ? '#f3ede1' : '#1a1814',
-                  }}>
-                    {reading.syllables.map(s => s.kana).join('')}
-                  </div>
-                )}
+                <div style={{
+                  fontFamily: theme.serif, fontSize: 18, color: theme.sub,
+                  letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 16,
+                }}>{name.toUpperCase()}</div>
+                <window.VerticalKana
+                  text={reading.syllables.map(s => s.kana).join('')}
+                  fontSize={56}
+                  color={theme.fg}
+                />
               </div>
             )}
 
@@ -125,15 +126,6 @@ function PDP({ theme, product, name, reading, onAdd, onBack }) {
               textTransform: 'uppercase', color: theme.sub,
               padding: '4px 8px', background: 'rgba(255,255,255,0.7)',
             }}>PREVIEW</div>
-          </div>
-
-          <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
-            {[1, 2, 3].map(i => (
-              <div key={i} style={{
-                width: 80, height: 80, border: `1px solid ${theme.line}`, opacity: i === 1 ? 1 : 0.5,
-                background: `repeating-linear-gradient(45deg, ${theme.line} 0 1px, transparent 1px 8px)`,
-              }}/>
-            ))}
           </div>
         </div>
 
@@ -151,78 +143,69 @@ function PDP({ theme, product, name, reading, onAdd, onBack }) {
           <p style={{ fontFamily: theme.serif, fontSize: 16, lineHeight: 1.6,
                       color: theme.fg, marginBottom: 36 }}>{product.desc}</p>
 
-          <div style={{ marginBottom: 28, padding: '18px 22px', background: theme.cardBg,
-                        border: `1px solid ${theme.line}` }}>
-            <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: '0.22em',
-                          textTransform: 'uppercase', color: theme.sub, marginBottom: 8 }}>
-              Customized for
-            </div>
-            <div style={{ fontFamily: theme.serif, fontSize: 24, color: theme.fg, fontStyle: 'italic' }}>
-              {name}
-              {reading && (
-                <span style={{ marginLeft: 14, fontStyle: 'normal', fontSize: 22, color: theme.fg }}>
-                  · {reading.syllables.map(s => s.kana).join('')}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {product.colors && (
-            <Section theme={theme} label="Color">
-              <div style={{ display: 'flex', gap: 10 }}>
-                {product.colors.map(c => (
-                  <button key={c.id} onClick={() => setColor(c)} title={c.label}
-                    style={{
-                      width: 38, height: 38, borderRadius: '50%', cursor: 'pointer',
-                      border: color && color.id === c.id ? `2px solid ${theme.fg}` : `1px solid ${theme.line}`,
-                      background: c.hex, padding: 0, outline: 'none',
-                      boxShadow: color && color.id === c.id ? `0 0 0 2px ${theme.bg}, 0 0 0 3px ${theme.fg}` : 'none',
-                    }}/>
-                ))}
+          {name && (
+            <div style={{ marginBottom: 24, padding: '18px 22px', background: theme.cardBg,
+                          border: `1px solid ${theme.line}` }}>
+              <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: '0.22em',
+                            textTransform: 'uppercase', color: theme.sub, marginBottom: 8 }}>
+                Reading for
               </div>
-              {color && <div style={{ fontFamily: theme.serif, fontSize: 14, color: theme.sub, marginTop: 8 }}>
-                {color.label}
-              </div>}
-            </Section>
+              <div style={{ fontFamily: theme.serif, fontSize: 24, color: theme.fg, fontStyle: 'italic' }}>
+                {name}
+                {reading && reading.syllables && (
+                  <span style={{ marginLeft: 14, fontStyle: 'normal', fontSize: 22, color: theme.fg }}>
+                    · {reading.syllables.map(s => s.kana).join('')}
+                  </span>
+                )}
+              </div>
+            </div>
           )}
 
-          {product.sizes && product.sizes.length > 1 && (
-            <Section theme={theme} label="Size">
-              <div style={{ display: 'flex', gap: 8 }}>
-                {product.sizes.map(s => (
-                  <button key={s} onClick={() => setSize(s)} style={{
-                    minWidth: 44, padding: '10px 14px', cursor: 'pointer',
-                    background: size === s ? theme.fg : 'transparent',
-                    color: size === s ? theme.bg : theme.fg,
-                    border: `1px solid ${size === s ? theme.fg : theme.line}`,
-                    fontFamily: theme.sans, fontSize: 13, letterSpacing: '0.06em',
-                  }}>{s}</button>
-                ))}
+          {product.requiresTwoNames && (
+            <Section theme={theme} label="Second name">
+              <input type="text" value={secondName}
+                onChange={e => setSecondName(e.target.value)}
+                placeholder="The other name"
+                style={inputStyle}/>
+              <div style={{ marginTop: 8, fontSize: 12, color: theme.sub, fontStyle: 'italic' }}>
+                Used in your couple reading PDF.
               </div>
             </Section>
           )}
 
-          {product.id !== 'pdf' && product.id !== 'scroll' && (
+          {product.requiresDedication && (
             <>
-              <Section theme={theme} label="Placement">
-                <SegControl theme={theme} value={position} onChange={setPosition}
-                            options={[{ v: 'chest', l: 'Chest' }, { v: 'back', l: 'Back' }]}/>
+              <Section theme={theme} label="From">
+                <input type="text" value={senderName}
+                  onChange={e => setSenderName(e.target.value)}
+                  placeholder="Your name (the giver)"
+                  style={inputStyle}/>
               </Section>
-              <Section theme={theme} label="Layout">
-                <SegControl theme={theme} value={layout} onChange={setLayout}
-                            options={[{ v: 'vertical', l: 'Vertical (tategaki)' }, { v: 'horizontal', l: 'Horizontal' }]}/>
+              <Section theme={theme} label="A personal note (optional)">
+                <textarea value={dedication}
+                  onChange={e => setDedication(e.target.value)}
+                  rows={3}
+                  placeholder="A few words from the heart..."
+                  style={{ ...inputStyle, fontFamily: theme.serif, lineHeight: 1.5, resize: 'vertical', minHeight: 80 }}/>
               </Section>
             </>
           )}
 
-          <button onClick={handleAdd} style={{
-            marginTop: 16, width: '100%', background: added ? theme.accent : theme.fg,
-            color: theme.bg, border: 0, padding: '20px',
-            fontFamily: theme.sans, fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase',
-            cursor: 'pointer', transition: 'background 0.2s',
-          }}>
-            {added ? '✓ Added to your reading' : 'Add to cart · $' + product.price}
-          </button>
+          <a href={product.gumroad} target="_blank" rel="noopener noreferrer"
+            onClick={handleBuyClick}
+            style={{
+              display: 'block', marginTop: 16, width: '100%', textAlign: 'center',
+              background: theme.fg, color: theme.bg, padding: '20px',
+              fontFamily: theme.sans, fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase',
+              cursor: 'pointer', textDecoration: 'none', boxSizing: 'border-box',
+            }}>
+            Get it for ${product.price} →
+          </a>
+
+          <p style={{ marginTop: 14, fontFamily: theme.serif, fontSize: 13,
+                      color: theme.sub, textAlign: 'center', fontStyle: 'italic' }}>
+            Each reading is hand-prepared and delivered to your inbox within 24 hours.
+          </p>
         </div>
       </div>
     </div>
@@ -438,11 +421,10 @@ window.KotodamaApp = function KotodamaApp({ theme, initialScreen = 'landing', in
 
   return (
     <window.WashiBg tone={theme.tone} style={{ minHeight: '100%', position: 'relative' }}>
-      <KNavBar theme={theme} screen={screen} hasReading={hasReading} cartCount={cart.length}
+      <KNavBar theme={theme} screen={screen} hasReading={hasReading}
         onNav={(k) => {
           if (k === 'reading') nav('reading');
           else if (k === 'products') nav('products');
-          else if (k === 'cart') nav('cart');
           else if (k === 'about') nav('landing');
           else if (k === 'landing') nav('landing');
         }}/>
@@ -477,16 +459,8 @@ window.KotodamaApp = function KotodamaApp({ theme, initialScreen = 'landing', in
       )}
 
       {screen === 'pdp' && activeProduct && (
-        <PDP theme={theme} product={activeProduct} name={name || 'You'} reading={reading}
-          onAdd={(item) => { setCart([...cart, item]); }}
+        <PDP theme={theme} product={activeProduct} name={name || ''} reading={reading}
           onBack={() => nav('products')}/>
-      )}
-
-      {screen === 'cart' && (
-        <Cart theme={theme} items={cart} name={name}
-          onRemove={(idx) => setCart(cart.filter((_, i) => i !== idx))}
-          onShop={() => nav('products')}
-          onCheckout={() => alert('Checkout flow — not implemented in this prototype')}/>
       )}
 
       <div style={{

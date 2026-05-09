@@ -53,14 +53,38 @@ window.KT_THEMES = {
 
 window.KT_PRODUCTS = [
   {
-    id: 'pdf',
-    name: 'Kotodama Reading',
-    sub: 'A printable scroll of your name',
-    type: 'Digital · PDF',
-    price: 18,
-    formats: ['12-page PDF', 'Print at home'],
-    desc: 'A long-form, hand-typeset PDF — your full reading, the syllables of your name, the elemental archetype, and a meditation written for you.',
-    placeholder: 'PDF scroll',
+    id: 'personal',
+    name: 'Personal Reading',
+    sub: 'Your name, fully unfolded',
+    type: 'Digital · PDF · $19',
+    price: 19,
+    gumroad: 'https://cyberyush.gumroad.com/l/djzsxi',
+    badge: 'Most Popular',
+    desc: 'Your full kotodama reading — every sound of your name unfolded into its hidden meaning, with a print-ready poster. Hand-prepared and delivered to your inbox within 24 hours.',
+    placeholder: 'Personal Reading PDF',
+  },
+  {
+    id: 'couple',
+    name: 'Reading for Two',
+    sub: 'Two souls, one resonance',
+    type: 'Digital · PDF · $35',
+    price: 35,
+    gumroad: 'https://cyberyush.gumroad.com/l/kkevz',
+    requiresTwoNames: true,
+    desc: 'Both names, both kotodama, and the resonance hidden between them. A keepsake for couples, family, or two who share a path.',
+    placeholder: 'Couple Reading PDF',
+  },
+  {
+    id: 'gift',
+    name: 'Gift Edition',
+    sub: 'An heirloom for someone you love',
+    type: 'Digital · PDF · $49',
+    price: 49,
+    gumroad: 'https://cyberyush.gumroad.com/l/uhqny',
+    requiresDedication: true,
+    badge: 'Gift Favorite',
+    desc: 'Everything in the Personal Reading, plus a dedication page (For [name], with love from [name]) and a hand-prepared message. Delivered to your inbox within 24 hours.',
+    placeholder: 'Gift Edition PDF',
   },
 ];
 
@@ -80,7 +104,7 @@ function Logo({ theme, size = 18 }) {
   );
 }
 
-function NavBar({ theme, screen, onNav, hasReading, cartCount }) {
+function NavBar({ theme, screen, onNav, hasReading }) {
   const items = [
     { k: 'about', label: 'About' },
     { k: 'products', label: 'Shop', enabled: true },
@@ -107,18 +131,7 @@ function NavBar({ theme, screen, onNav, hasReading, cartCount }) {
             }}>{i.label}</button>
         ))}
       </div>
-      <button onClick={() => onNav('cart')} style={{
-        background: 'none', border: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
-        fontFamily: theme.sans, fontSize: 13, letterSpacing: '0.08em', textTransform: 'uppercase', color: theme.fg,
-      }}>
-        <span>Cart</span>
-        <span style={{
-          minWidth: 18, height: 18, padding: '0 5px', borderRadius: 9, background: theme.accent,
-          color: theme.tone === 'midnight' ? '#0e1118' : '#fff', fontSize: 11,
-          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-          fontFamily: theme.sans, letterSpacing: 0,
-        }}>{cartCount}</span>
-      </button>
+      <div style={{ width: 1, opacity: 0 }}/>
     </div>
   );
 }
