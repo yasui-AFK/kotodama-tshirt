@@ -303,6 +303,9 @@ function NameInput({ theme, name, setName, onSubmit }) {
 
   const begin = () => {
     if (!name.trim() || reading.syllables.length === 0) return;
+    if (window.trackEvent) {
+      window.trackEvent('kotodama_reveal', { name_input: name });
+    }
     setStage('animating');
     setTimeout(() => onSubmit(), Math.max(2400, reading.syllables.length * 480 + 1200));
   };
