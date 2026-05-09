@@ -246,19 +246,31 @@
     const kotodamaResults = lookupKotodama(conv.hiragana);
 
     // syllables を merged window.KOTODAMA から組み立て直す
+    // 濁音・拗音・促音（プロトの50音に無い文字）は ENGLISH_MEANINGS をフォールバックに使う
     const syllables = kotodamaResults
       .filter(k => !k.isSpecial)
       .map(k => {
         const merged = window.KOTODAMA[k.romaji];
         if (merged) return { key: k.romaji, ...merged };
+
+        // Fallback: legacy ENGLISH_MEANINGS は "Keyword — Description" 形式
+        const en = (window.ENGLISH_MEANINGS && window.ENGLISH_MEANINGS[k.kana]) || '';
+        const dashIdx = en.indexOf('—');
+        const keyword = dashIdx > 0 ? en.slice(0, dashIdx).trim() : (en || k.meaning);
+        const poem = dashIdx > 0 ? en.slice(dashIdx + 1).trim() : keyword;
+        const deepMeaning = (window.DEEP_MEANINGS && window.DEEP_MEANINGS[k.kana]) || null;
+
         return {
           key: k.romaji,
           kana: k.kana,
           romaji: k.romaji,
           element: 'Sky',
-          keyword: k.meaning,
-          poem: k.meaning,
+          keyword,
+          poem,
           colorPill: k.color,
+          shortJa: k.meaning,
+          motif: k.motif,
+          deepMeaning,
         };
       });
 
