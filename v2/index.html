@@ -15,9 +15,16 @@
 <body>
   <div id="root"></div>
 
+  <!-- Hidden canvases for Share Card / Poster / Couple PDF generation -->
+  <canvas id="shareCardCanvas" width="1080" height="1080" style="display:none;"></canvas>
+  <canvas id="posterCanvas" width="2160" height="2160" style="display:none;"></canvas>
+  <canvas id="coupleCardCanvas1" width="1080" height="1080" style="display:none;"></canvas>
+  <canvas id="coupleCardCanvas2" width="1080" height="1080" style="display:none;"></canvas>
+
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <!-- Legacy data + dictionaries (loaded before prototype data) -->
   <script src="data/legacy-data.js"></script>
@@ -29,6 +36,9 @@
 
   <!-- Bridge: overrides romanizeName/readName, merges KOTODAMA -->
   <script src="data-bridge.js"></script>
+
+  <!-- PDF engine: jsPDF + Canvas-based Japanese rendering -->
+  <script src="pdf-engine.js"></script>
 
   <!-- React components -->
   <script type="text/babel" src="kotodama-visuals.jsx"></script>

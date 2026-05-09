@@ -513,7 +513,12 @@ function Reading({ theme, name, onShop, onShare }) {
             Take {name}'s reading home — as a scroll, a tee, or a keepsake.
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 12, flexShrink: 0 }}>
+        <div style={{ display: 'flex', gap: 12, flexShrink: 0, flexWrap: 'wrap' }}>
+          <button onClick={() => window.KT_PDF && window.KT_PDF.generateFreeSamplePdf(name)} style={{
+            background: 'none', color: theme.fg, border: `1px solid ${theme.fg}`,
+            padding: '14px 22px', fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em',
+            textTransform: 'uppercase', cursor: 'pointer',
+          }}>Free Sample · 3 sounds</button>
           <button onClick={onShare} style={{
             background: 'none', color: theme.fg, border: `1px solid ${theme.fg}`,
             padding: '14px 22px', fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em',
