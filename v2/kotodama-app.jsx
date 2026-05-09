@@ -417,7 +417,30 @@ window.KotodamaApp = function KotodamaApp({ theme, initialScreen = 'landing', in
   const reading = useMemoK2(() => name ? window.readName(name) : null, [name]);
   const hasReading = !!(reading && reading.syllables.length);
 
+  const isAdmin = useMemoK2(() => {
+    if (typeof window === 'undefined') return false;
+    return new URLSearchParams(window.location.search).get('admin') === '1';
+  }, []);
+
   const nav = (s) => { setScreen(s); window.scrollTo(0, 0); };
+
+  if (isAdmin) {
+    return (
+      <window.WashiBg tone={theme.tone} style={{ minHeight: '100%', position: 'relative' }}>
+        <KNavBar theme={theme} screen="admin" hasReading={false} onNav={() => {}}/>
+        <window.KT_PARTS.AdminPanel theme={theme}/>
+        <div style={{
+          marginTop: 80, padding: '36px 60px',
+          borderTop: `1px solid ${theme.line}`, display: 'flex', justifyContent: 'space-between',
+          fontFamily: theme.mono, fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase',
+          color: theme.sub,
+        }}>
+          <span>言霊 · Kotodama Studio · Admin</span>
+          <span>?admin=1</span>
+        </div>
+      </window.WashiBg>
+    );
+  }
 
   return (
     <window.WashiBg tone={theme.tone} style={{ minHeight: '100%', position: 'relative' }}>

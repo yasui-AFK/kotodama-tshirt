@@ -548,5 +548,91 @@ function Reading({ theme, name, onShop, onShare }) {
   );
 }
 
+// ──────────────────────────────────────────────────────────────────────────
+// AdminPanel — URL ?admin=1 で表示される運用ツール
+// 各 SKU の PDF を入力フォーム → window.KT_PDF.* で生成
+// ──────────────────────────────────────────────────────────────────────────
+function AdminPanel({ theme }) {
+  const [customerName, setCustomerName] = useStateK('');
+  const [secondName, setSecondName] = useStateK('');
+  const [senderName, setSenderName] = useStateK('');
+  const [giftNote, setGiftNote] = useStateK('');
+
+  const inputStyle = {
+    width: '100%', padding: '10px 12px', fontFamily: theme.serif, fontSize: 15,
+    background: theme.bg, border: `1px solid ${theme.line}`, color: theme.fg,
+    outline: 'none', borderRadius: 0, marginBottom: 12, boxSizing: 'border-box',
+  };
+  const labelStyle = {
+    fontFamily: theme.mono, fontSize: 10, letterSpacing: '0.22em',
+    textTransform: 'uppercase', color: theme.sub, display: 'block',
+    marginBottom: 8, marginTop: 12,
+  };
+  const btnStyle = {
+    background: 'none', border: `1px solid ${theme.fg}`, color: theme.fg,
+    padding: '12px 18px', fontFamily: theme.sans, fontSize: 11,
+    letterSpacing: '0.16em', textTransform: 'uppercase', cursor: 'pointer',
+  };
+
+  return (
+    <div style={{ padding: '60px 60px', maxWidth: 760, margin: '0 auto' }}>
+      <div style={{
+        fontFamily: theme.mono, fontSize: 11, letterSpacing: '0.32em',
+        textTransform: 'uppercase', color: theme.sub, marginBottom: 20,
+      }}>ADMIN · PDF FULFILLMENT</div>
+      <h2 style={{
+        fontFamily: theme.serif, fontSize: 36, color: theme.fg,
+        fontWeight: 400, margin: '0 0 12px',
+      }}>Generate Reading PDFs</h2>
+      <p style={{ fontFamily: theme.serif, fontSize: 14, color: theme.sub, marginBottom: 32 }}>
+        Gumroad 注文ごとに、購入者の名前を入力 → 該当 SKU の PDF を生成 → メールで配信。
+        URL に <code style={{ background: theme.cardBg, padding: '2px 6px' }}>?admin=1</code> を付けた時のみ表示。
+      </p>
+
+      <div style={{ padding: 24, background: theme.cardBg, border: `1px solid ${theme.line}`, marginBottom: 28 }}>
+        <label style={{ ...labelStyle, marginTop: 0 }}>Customer Name (required for all)</label>
+        <input value={customerName} onChange={e => setCustomerName(e.target.value)}
+          placeholder="e.g. Sophia" style={inputStyle}/>
+
+        <label style={labelStyle}>Second Name (Couple $35 only)</label>
+        <input value={secondName} onChange={e => setSecondName(e.target.value)}
+          placeholder="e.g. Michael" style={inputStyle}/>
+
+        <label style={labelStyle}>Sender Name (Gift $49 only)</label>
+        <input value={senderName} onChange={e => setSenderName(e.target.value)}
+          placeholder="e.g. James" style={inputStyle}/>
+
+        <label style={labelStyle}>Personal Note (Gift $49, optional)</label>
+        <textarea value={giftNote} onChange={e => setGiftNote(e.target.value)}
+          rows={2}
+          placeholder="A few words from the giver..."
+          style={{ ...inputStyle, fontFamily: theme.serif, lineHeight: 1.5, resize: 'vertical', minHeight: 60 }}/>
+      </div>
+
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <button style={btnStyle} onClick={() => {
+          if (!customerName.trim()) return alert('Customer name is required.');
+          window.KT_PDF.generateFreeSamplePdf(customerName);
+        }}>Free Sample</button>
+
+        <button style={btnStyle} onClick={() => {
+          if (!customerName.trim()) return alert('Customer name is required.');
+          window.KT_PDF.generateFullPersonalPdf(customerName);
+        }}>Personal Reading ($19)</button>
+
+        <button style={btnStyle} onClick={() => {
+          if (!customerName.trim() || !secondName.trim()) return alert('Both names are required for couple reading.');
+          window.KT_PDF.generateCoupleReadingPdf(customerName, secondName);
+        }}>Couple Reading ($35)</button>
+
+        <button style={btnStyle} onClick={() => {
+          if (!customerName.trim() || !senderName.trim()) return alert('Recipient and sender names are required.');
+          window.KT_PDF.generateGiftEditionPdf(customerName, senderName, giftNote);
+        }}>Gift Edition ($49)</button>
+      </div>
+    </div>
+  );
+}
+
 window.KT_PARTS = window.KT_PARTS || {};
-Object.assign(window.KT_PARTS, { Logo, NavBar, Placeholder, Landing, NameInput, Reading });
+Object.assign(window.KT_PARTS, { Logo, NavBar, Placeholder, Landing, NameInput, Reading, AdminPanel });
