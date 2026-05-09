@@ -455,6 +455,14 @@ function Reading({ theme, name, onShop, onShare }) {
             <span style={{ fontFamily: theme.serif, fontStyle: 'italic', fontSize: 28, color: theme.sub }}>— {active.romaji}</span>
           </div>
           <div style={{ display: 'flex', gap: 14, marginBottom: 24, alignItems: 'center' }}>
+            {active.colorPill && (
+              <span aria-hidden="true" style={{
+                width: 24, height: 24, borderRadius: '50%',
+                background: active.colorPill,
+                boxShadow: '0 2px 6px rgba(0,0,0,0.18)',
+                flexShrink: 0,
+              }}/>
+            )}
             <span style={{
               fontFamily: theme.mono, fontSize: 10, letterSpacing: '0.2em',
               textTransform: 'uppercase', color: theme.accent,
@@ -465,9 +473,19 @@ function Reading({ theme, name, onShop, onShare }) {
             </span>
           </div>
           <p style={{ fontFamily: theme.serif, fontSize: 22, lineHeight: 1.55, color: theme.fg,
-                      fontStyle: 'italic', maxWidth: 460, margin: '0 0 36px' }}>
+                      fontStyle: 'italic', maxWidth: 460, margin: '0 0 24px' }}>
             “{active.poem}”
           </p>
+          {active.deepMeaning && (
+            <p style={{
+              fontFamily: theme.serif, fontSize: 16, lineHeight: 1.75,
+              color: theme.fg, fontWeight: 300,
+              maxWidth: 540, margin: '0 0 36px',
+              opacity: 0.85,
+            }}>
+              {active.deepMeaning}
+            </p>
+          )}
 
           <div style={{ display: 'flex', gap: 14 }}>
             <button onClick={() => setActiveIdx((activeIdx - 1 + reading.syllables.length) % reading.syllables.length)}

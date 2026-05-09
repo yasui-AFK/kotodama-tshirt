@@ -19,7 +19,18 @@
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
 
+  <!-- Legacy data + dictionaries (loaded before prototype data) -->
+  <script src="data/legacy-data.js"></script>
+  <script src="data/name-dictionary.js"></script>
+  <script src="data/kotodama-deep-meanings.js"></script>
+
+  <!-- Prototype core -->
   <script src="kotodama-data.js"></script>
+
+  <!-- Bridge: overrides romanizeName/readName, merges KOTODAMA -->
+  <script src="data-bridge.js"></script>
+
+  <!-- React components -->
   <script type="text/babel" src="kotodama-visuals.jsx"></script>
   <script type="text/babel" src="brush-writer.jsx"></script>
   <script type="text/babel" src="kotodama-screens.jsx"></script>
