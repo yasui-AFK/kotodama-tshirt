@@ -248,7 +248,7 @@ function Landing({ theme, onStart }) {
           color: theme.fg, fontWeight: 400, margin: '0 0 24px',
           animation: 'kt-fadeup 1.2s ease-out 7.0s both',
         }}>
-          Discover the <em style={{ fontStyle: 'italic', color: theme.accent2 }}>whisper</em> of your name.
+          Give someone the <em style={{ fontStyle: 'italic', color: theme.accent2 }}>spirit</em> of their name.
         </h2>
 
         <p style={{
@@ -257,7 +257,7 @@ function Landing({ theme, onStart }) {
           animation: 'kt-fadeup 1.2s ease-out 7.3s both',
         }}>
           In the old Japanese tradition, every sound carries a meaning — a small spirit called <em>kotodama</em>.
-          Enter your name and we will brush its hidden song.
+          Enter a name and we will brush its hidden song — for you, or for someone you love.
         </p>
 
         <button onClick={onStart} style={{
@@ -265,7 +265,7 @@ function Landing({ theme, onStart }) {
           background: theme.fg, color: theme.bg, border: 0, padding: '18px 44px',
           fontFamily: theme.sans, fontSize: 13, letterSpacing: '0.18em', textTransform: 'uppercase',
           cursor: 'pointer', borderRadius: 0,
-        }}>Begin your reading</button>
+        }}>Begin a reading</button>
 
         <div style={{
           marginTop: 16, fontFamily: theme.sans, fontSize: 12, color: theme.sub,
