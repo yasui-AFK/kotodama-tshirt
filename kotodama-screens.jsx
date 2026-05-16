@@ -353,10 +353,10 @@ function Landing({ theme, onStart }) {
         }}>
           <h1 style={{
             fontFamily: theme.serif,
-            fontSize: 'clamp(56px, 11vw, 180px)',
-            fontWeight: 300, letterSpacing: '0.05em',
+            fontSize: 'clamp(44px, 10vw, 140px)',
+            fontWeight: 600, letterSpacing: '0.03em',
             margin: '0 0 56px', color: theme.fg,
-            display: 'flex', justifyContent: 'center', gap: '0.04em',
+            display: 'flex', justifyContent: 'center', gap: '0.02em',
             lineHeight: 1, textShadow: '0 0 32px rgba(0,0,0,0.5)',
           }}>
             {[
@@ -539,21 +539,21 @@ function NameInput({ theme, name, setName, onSubmit }) {
       {stage === 'input' && (
         <>
           <h2 style={{
-            fontFamily: theme.serif, fontSize: 48, lineHeight: 1.15, color: theme.fg, fontWeight: 400, margin: '0 0 16px',
+            fontFamily: theme.serif, fontSize: 'clamp(28px, 7vw, 48px)', lineHeight: 1.2, color: theme.fg, fontWeight: 400, margin: '0 0 16px',
           }}>Speak your name softly.</h2>
-          <p style={{ fontFamily: theme.serif, fontSize: 17, color: theme.sub, maxWidth: 460, margin: '0 auto 56px' }}>
+          <p style={{ fontFamily: theme.serif, fontSize: 'clamp(15px, 4vw, 17px)', color: theme.sub, maxWidth: 460, margin: '0 auto 56px' }}>
             We'll listen for the sounds inside it, and brush each one in ink.
           </p>
 
-          <div style={{ maxWidth: 480, margin: '0 auto', position: 'relative' }}>
+          <div style={{ maxWidth: 'min(480px, 90vw)', margin: '0 auto', position: 'relative' }}>
             <input ref={inputRef} value={name} onChange={e => setName(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && begin()}
               placeholder="Your given name"
               style={{
                 width: '100%', padding: '20px 4px', background: 'transparent',
                 border: 0, borderBottom: `1px solid ${theme.fg}`,
-                fontFamily: theme.serif, fontSize: 32, color: theme.fg, textAlign: 'center',
-                outline: 'none', letterSpacing: '0.04em',
+                fontFamily: theme.serif, fontSize: 'clamp(20px, 5vw, 32px)', color: theme.fg, textAlign: 'center',
+                outline: 'none', letterSpacing: '0.04em', boxSizing: 'border-box',
               }}/>
             {reading.syllables.length > 0 && (
               <div style={{
@@ -616,11 +616,11 @@ function Reading({ theme, name, onShop, onShare }) {
 
   return (
     <div style={{ padding: '60px 60px 80px', position: 'relative', overflow: 'hidden', background: theme.bg }}>
-      {/* 言霊 brushed kanji backdrop — very subtle, behind everything */}
+      {/* 言霊 brushed kanji backdrop — visible behind reading */}
       <div aria-hidden style={{
         position: 'absolute', inset: 0, zIndex: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        pointerEvents: 'none', opacity: 0.06,
+        pointerEvents: 'none', opacity: 0.15,
       }}>
         <svg viewBox="0 0 440 220" style={{ width: 'min(900px, 75vw)', display: 'block' }}>
           <text x="110" y="180" textAnchor="middle" style={{
