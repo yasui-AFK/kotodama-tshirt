@@ -5,28 +5,32 @@ const { Logo: KLogo, NavBar: KNavBar, Placeholder: KPH, Landing: KLanding,
         NameInput: KNameInput, Reading: KReading } = window.KT_PARTS;
 
 function Products({ theme, name, reading, onPick }) {
+  const possessive = name && name !== 'your' ? `${name}'s` : 'your';
   return (
-    <div style={{ padding: '60px 60px 80px' }}>
-      <div style={{ textAlign: 'center', marginBottom: 56 }}>
+    <div style={{ padding: 'clamp(24px, 5vw, 60px) clamp(20px, 5vw, 60px) 80px' }}>
+      <div style={{ textAlign: 'center', marginBottom: 'clamp(36px, 6vw, 56px)' }}>
         <div style={{ fontFamily: theme.mono, fontSize: 11, letterSpacing: '0.32em',
                       textTransform: 'uppercase', color: theme.sub, marginBottom: 22 }}>
           THE COLLECTION
         </div>
-        <h2 style={{ fontFamily: theme.serif, fontSize: 56, color: theme.fg,
+        <h2 style={{ fontFamily: theme.serif, fontSize: 'clamp(32px, 7vw, 56px)', color: theme.fg,
                      fontWeight: 400, margin: '0 0 16px', lineHeight: 1.1 }}>
-          Things to keep <em style={{ fontStyle: 'italic' }}>{name}'s</em> reading.
+          Things to keep <em style={{ fontStyle: 'italic' }}>{possessive}</em> reading.
         </h2>
-        <p style={{ fontFamily: theme.serif, fontSize: 17, color: theme.sub,
+        <p style={{ fontFamily: theme.serif, fontSize: 'clamp(15px, 2.2vw, 17px)', color: theme.sub,
                     maxWidth: 520, margin: '0 auto' }}>
           Each piece is made to order with your name brushed in archival ink.
           {reading && reading.archetype && <> Curated for <em>{reading.archetype.name}</em>.</>}
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 36, maxWidth: 980, margin: '0 auto' }}>
+      <div style={{ display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 360px), 1fr))',
+                    gap: 'clamp(20px, 3vw, 36px)', maxWidth: 980, margin: '0 auto' }}>
         {window.KT_PRODUCTS.map(p => (
           <button key={p.id} onClick={() => onPick(p)} style={{
-            background: theme.cardBg, border: `1px solid ${theme.line}`, padding: 28, textAlign: 'left',
+            background: theme.cardBg, border: `1px solid ${theme.line}`,
+            padding: 'clamp(20px, 3vw, 28px)', textAlign: 'left',
             cursor: 'pointer', transition: 'all 0.25s', display: 'flex', flexDirection: 'column', gap: 18,
             color: 'inherit',
           }}
@@ -50,9 +54,9 @@ function Products({ theme, name, reading, onPick }) {
                 {p.type}
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 16, marginBottom: 8 }}>
-                <h3 style={{ fontFamily: theme.serif, fontSize: 28, color: theme.fg,
+                <h3 style={{ fontFamily: theme.serif, fontSize: 'clamp(22px, 4vw, 28px)', color: theme.fg,
                              fontWeight: 400, margin: 0, lineHeight: 1.15 }}>{p.name}</h3>
-                <div style={{ fontFamily: theme.serif, fontSize: 22, color: theme.fg }}>${p.price}</div>
+                <div style={{ fontFamily: theme.serif, fontSize: 'clamp(18px, 3vw, 22px)', color: theme.fg }}>${p.price}</div>
               </div>
               <div style={{ fontFamily: theme.serif, fontStyle: 'italic',
                             fontSize: 15, color: theme.sub }}>{p.sub}</div>
@@ -85,14 +89,16 @@ function PDP({ theme, product, name, reading, onBack }) {
   };
 
   return (
-    <div style={{ padding: '40px 60px 80px' }}>
+    <div style={{ padding: 'clamp(24px, 4vw, 40px) clamp(20px, 5vw, 60px) 80px' }}>
       <button onClick={onBack} style={{
         background: 'none', border: 0, cursor: 'pointer', color: theme.sub,
         fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase',
-        padding: 0, marginBottom: 32,
+        padding: 0, marginBottom: 'clamp(20px, 4vw, 32px)',
       }}>← back to collection</button>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 56, maxWidth: 1080, margin: '0 auto' }}>
+      <div style={{ display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 420px), 1fr))',
+                    gap: 'clamp(28px, 5vw, 56px)', maxWidth: 1080, margin: '0 auto' }}>
         <div>
           <div style={{ position: 'relative', background: theme.paper,
                         border: `1px solid ${theme.line}`, aspectRatio: '4/5', overflow: 'hidden' }}>
@@ -124,7 +130,8 @@ function PDP({ theme, product, name, reading, onBack }) {
               position: 'absolute', bottom: 14, right: 14,
               fontFamily: theme.mono, fontSize: 9, letterSpacing: '0.2em',
               textTransform: 'uppercase', color: theme.sub,
-              padding: '4px 8px', background: 'rgba(255,255,255,0.7)',
+              padding: '4px 8px', background: 'rgba(0,0,0,0.55)',
+              border: `1px solid ${theme.line}`,
             }}>PREVIEW</div>
           </div>
         </div>
@@ -134,13 +141,15 @@ function PDP({ theme, product, name, reading, onBack }) {
                         textTransform: 'uppercase', color: theme.sub, marginBottom: 14 }}>
             {product.type}
           </div>
-          <h1 style={{ fontFamily: theme.serif, fontSize: 44, color: theme.fg,
+          <h1 style={{ fontFamily: theme.serif, fontSize: 'clamp(28px, 7vw, 44px)', color: theme.fg,
                        fontWeight: 400, margin: '0 0 12px', lineHeight: 1.1 }}>{product.name}</h1>
-          <div style={{ fontFamily: theme.serif, fontStyle: 'italic', fontSize: 18,
+          <div style={{ fontFamily: theme.serif, fontStyle: 'italic',
+                        fontSize: 'clamp(15px, 3vw, 18px)',
                         color: theme.sub, marginBottom: 20 }}>{product.sub}</div>
-          <div style={{ fontFamily: theme.serif, fontSize: 28, color: theme.fg, marginBottom: 28 }}>${product.price}</div>
+          <div style={{ fontFamily: theme.serif, fontSize: 'clamp(22px, 5vw, 28px)',
+                        color: theme.fg, marginBottom: 28 }}>${product.price}</div>
 
-          <p style={{ fontFamily: theme.serif, fontSize: 16, lineHeight: 1.6,
+          <p style={{ fontFamily: theme.serif, fontSize: 'clamp(15px, 2.6vw, 16px)', lineHeight: 1.6,
                       color: theme.fg, marginBottom: 36 }}>{product.desc}</p>
 
           {name && (
