@@ -113,13 +113,20 @@ function NavBar({ theme, screen, onNav, hasReading }) {
   return (
     <div style={{
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '20px 36px', borderBottom: `1px solid ${theme.line}`,
+      padding: 'clamp(14px, 3vw, 20px) clamp(16px, 4vw, 36px)',
+      borderBottom: `1px solid ${theme.line}`,
       background: theme.bg, position: 'relative', zIndex: 5,
+      flexWrap: 'nowrap', gap: 12,
     }}>
-      <button onClick={() => onNav('landing')} style={{ background: 'none', border: 0, cursor: 'pointer', padding: 0 }}>
+      <button onClick={() => onNav('landing')} style={{ background: 'none', border: 0, cursor: 'pointer', padding: 0, flexShrink: 0 }}>
         <Logo theme={theme} />
       </button>
-      <div style={{ display: 'flex', gap: 28, fontFamily: theme.sans, fontSize: 13, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+      <div style={{
+        display: 'flex', gap: 'clamp(12px, 3vw, 28px)',
+        fontFamily: theme.sans, fontSize: 'clamp(10px, 2.5vw, 13px)',
+        letterSpacing: '0.08em', textTransform: 'uppercase',
+        flexShrink: 1, minWidth: 0,
+      }}>
         {items.map(i => (
           <button key={i.k} onClick={() => i.enabled !== false && onNav(i.k)}
             style={{
@@ -127,11 +134,10 @@ function NavBar({ theme, screen, onNav, hasReading }) {
               color: screen === i.k ? theme.fg : theme.sub,
               opacity: i.enabled === false ? 0.4 : 1,
               fontFamily: 'inherit', fontSize: 'inherit', letterSpacing: 'inherit', textTransform: 'inherit',
-              padding: 0,
+              padding: 0, whiteSpace: 'nowrap',
             }}>{i.label}</button>
         ))}
       </div>
-      <div style={{ width: 1, opacity: 0 }}/>
     </div>
   );
 }
@@ -353,10 +359,10 @@ function Landing({ theme, onStart }) {
         }}>
           <h1 style={{
             fontFamily: theme.serif,
-            fontSize: 'clamp(44px, 10vw, 140px)',
-            fontWeight: 600, letterSpacing: '0.03em',
+            fontSize: 'clamp(36px, 9vw, 120px)',
+            fontWeight: 600, letterSpacing: '0',
             margin: '0 0 56px', color: theme.fg,
-            display: 'flex', justifyContent: 'center', gap: '0.02em',
+            display: 'flex', justifyContent: 'center', gap: '0',
             lineHeight: 1, textShadow: '0 0 32px rgba(0,0,0,0.5)',
           }}>
             {[
