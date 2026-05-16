@@ -400,7 +400,7 @@ function Landing({ theme, onStart }) {
         }}>
           <h1 style={{
             fontFamily: theme.serif,
-            fontSize: 'clamp(36px, 9vw, 120px)',
+            fontSize: 'clamp(48px, 12vw, 140px)',
             fontWeight: 600, letterSpacing: '0',
             margin: '0 0 56px', color: theme.fg,
             display: 'flex', justifyContent: 'center', gap: '0',
@@ -425,9 +425,9 @@ function Landing({ theme, onStart }) {
           </h1>
           <div style={{
             fontFamily: theme.serif,
-            fontSize: 'clamp(24px, 5vw, 32px)',
-            lineHeight: 1.7, color: theme.fg,
-            fontStyle: 'italic', maxWidth: 720,
+            fontSize: 'clamp(17px, 4vw, 26px)',
+            lineHeight: 1.55, color: theme.fg,
+            fontStyle: 'italic', maxWidth: 620,
             textShadow: '0 0 24px rgba(0,0,0,0.5)', opacity: 0.92,
           }}>
             <p style={{ margin: 0, opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 11.5s forwards' }}>
@@ -446,12 +446,12 @@ function Landing({ theme, onStart }) {
 
           {/* Hero CTA — always visible, floats gently */}
           <button onClick={onStart} style={{
-            marginTop: 56,
-            padding: '22px 56px',
+            marginTop: 'clamp(32px, 6vw, 56px)',
+            padding: 'clamp(14px, 2.5vw, 22px) clamp(28px, 6vw, 56px)',
             background: 'transparent', color: theme.fg,
             border: `1px solid ${theme.fg}`,
-            fontFamily: theme.mono, fontSize: 15,
-            letterSpacing: '0.24em', textTransform: 'uppercase',
+            fontFamily: theme.mono, fontSize: 'clamp(12px, 1.5vw, 15px)',
+            letterSpacing: '0.22em', textTransform: 'uppercase',
             cursor: 'pointer',
             textShadow: '0 0 16px rgba(0,0,0,0.6)',
             animation: 'kt-float 3.5s ease-in-out infinite',
@@ -459,28 +459,60 @@ function Landing({ theme, onStart }) {
         </div>
       </section>
 
-      {/* ============ INTRO ============ */}
+      {/* ============ INTRO: THE SPIRIT OF THE WORD ============ */}
       <section style={{
-        padding: '100px 24px', textAlign: 'center',
-        background: theme.bg,
+        padding: 'clamp(80px, 12vw, 140px) clamp(24px, 5vw, 60px)',
+        background: theme.bg, textAlign: 'center',
       }}>
-        <div style={{ maxWidth: 720, margin: '0 auto' }}>
+        <div style={{ maxWidth: 680, margin: '0 auto' }}>
+
+          <h2 style={{
+            fontFamily: theme.serif,
+            fontSize: 'clamp(32px, 7vw, 56px)',
+            fontWeight: 400, lineHeight: 1.25,
+            letterSpacing: '0.04em', color: theme.fg,
+            margin: '0 0 clamp(48px, 8vw, 80px)',
+          }}>
+            The Spirit<br/>
+            of <em style={{ fontStyle: 'italic' }}>the Word</em>
+          </h2>
+
+          <div style={{
+            position: 'relative',
+            width: '100%', maxWidth: 480,
+            margin: '0 auto clamp(48px, 8vw, 80px)',
+            aspectRatio: '3/4', overflow: 'hidden',
+          }}>
+            <img src="assets/photos/intro.jpg"
+              alt="A name carried across generations"
+              style={{
+                width: '100%', height: '100%',
+                objectFit: 'cover', display: 'block',
+                filter: 'brightness(0.92)',
+              }}/>
+          </div>
+
           <div style={{
             fontFamily: theme.serif,
-            fontSize: 'clamp(56px, 9vw, 110px)',
-            fontWeight: 300, letterSpacing: '0.3em',
-            color: theme.fg, marginBottom: 24,
-          }}>言霊</div>
-          <p style={{
-            fontFamily: theme.serif,
-            fontSize: 'clamp(22px, 4.5vw, 26px)',
-            lineHeight: 1.8, color: theme.fg, opacity: 0.85,
-            fontStyle: 'italic', margin: 0,
+            fontSize: 'clamp(17px, 3.5vw, 22px)',
+            lineHeight: 1.7, fontStyle: 'italic',
+            color: theme.fg, opacity: 0.92,
+            display: 'flex', flexDirection: 'column',
+            gap: 'clamp(28px, 5vw, 44px)',
           }}>
-            In the old Japanese tradition,<br/>
-            every sound carries a meaning — a small spirit called <span style={{ color: theme.accent, fontStyle: 'normal' }}>kotodama</span>.<br/>
-            Brush a name for any chapter of a life.
-          </p>
+            <p style={{ margin: 0 }}>
+              In the old Japanese tradition,<br/>
+              every sound carries a meaning.
+            </p>
+            <p style={{ margin: 0 }}>
+              A small spirit, called <span style={{ color: theme.accent, fontStyle: 'normal' }}>kotodama</span>.
+            </p>
+            <p style={{ margin: 0 }}>
+              Brush a name<br/>
+              for any chapter of a life.
+            </p>
+          </div>
+
         </div>
       </section>
 
@@ -530,11 +562,11 @@ function Landing({ theme, onStart }) {
               textShadow: '0 0 24px rgba(0,0,0,0.6)',
             }}>{s.desc}</p>
             <button onClick={onStart} style={{
-              padding: '24px 60px',
+              padding: 'clamp(14px, 2.5vw, 22px) clamp(28px, 6vw, 56px)',
               background: 'transparent', color: theme.fg,
               border: `1px solid ${theme.fg}`,
-              fontFamily: theme.mono, fontSize: 16,
-              letterSpacing: '0.24em', textTransform: 'uppercase',
+              fontFamily: theme.mono, fontSize: 'clamp(12px, 1.5vw, 15px)',
+              letterSpacing: '0.22em', textTransform: 'uppercase',
               cursor: 'pointer', transition: 'all 0.3s',
             }}>{s.cta} →</button>
           </div>
