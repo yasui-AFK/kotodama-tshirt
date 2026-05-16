@@ -110,34 +110,75 @@ function NavBar({ theme, screen, onNav, hasReading }) {
     { k: 'products', label: 'Shop', enabled: true },
     { k: 'reading', label: 'Your Reading', enabled: hasReading },
   ];
+  const [isMobile, setIsMobile] = useStateK(false);
+  const [menuOpen, setMenuOpen] = useStateK(false);
+
+  useEffectK(() => {
+    const check = () => setIsMobile(window.innerWidth < 720);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
   return (
     <div style={{
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: 'clamp(14px, 3vw, 20px) clamp(16px, 4vw, 36px)',
+      padding: '20px 28px',
       borderBottom: `1px solid ${theme.line}`,
-      background: theme.bg, position: 'relative', zIndex: 5,
-      flexWrap: 'nowrap', gap: 12,
+      background: theme.bg, position: 'relative', zIndex: 50,
     }}>
       <button onClick={() => onNav('landing')} style={{ background: 'none', border: 0, cursor: 'pointer', padding: 0, flexShrink: 0 }}>
         <Logo theme={theme} />
       </button>
-      <div style={{
-        display: 'flex', gap: 'clamp(12px, 3vw, 28px)',
-        fontFamily: theme.sans, fontSize: 'clamp(10px, 2.5vw, 13px)',
-        letterSpacing: '0.08em', textTransform: 'uppercase',
-        flexShrink: 1, minWidth: 0,
-      }}>
-        {items.map(i => (
-          <button key={i.k} onClick={() => i.enabled !== false && onNav(i.k)}
-            style={{
-              background: 'none', border: 0, cursor: i.enabled === false ? 'not-allowed' : 'pointer',
-              color: screen === i.k ? theme.fg : theme.sub,
-              opacity: i.enabled === false ? 0.4 : 1,
-              fontFamily: 'inherit', fontSize: 'inherit', letterSpacing: 'inherit', textTransform: 'inherit',
-              padding: 0, whiteSpace: 'nowrap',
-            }}>{i.label}</button>
-        ))}
-      </div>
+
+      {isMobile ? (
+        <>
+          <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu" style={{
+            background: 'none', border: 0, cursor: 'pointer', padding: 8,
+            color: theme.fg, display: 'flex', flexDirection: 'column', gap: 5,
+          }}>
+            <span style={{ width: 22, height: 1.5, background: theme.fg, transition: 'transform 0.3s', transform: menuOpen ? 'translateY(6.5px) rotate(45deg)' : 'none', transformOrigin: 'center' }}/>
+            <span style={{ width: 22, height: 1.5, background: theme.fg, opacity: menuOpen ? 0 : 1, transition: 'opacity 0.2s' }}/>
+            <span style={{ width: 22, height: 1.5, background: theme.fg, transition: 'transform 0.3s', transform: menuOpen ? 'translateY(-6.5px) rotate(-45deg)' : 'none', transformOrigin: 'center' }}/>
+          </button>
+          {menuOpen && (
+            <div style={{
+              position: 'fixed', inset: 0, background: theme.bg,
+              zIndex: 40,
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center', gap: 40,
+            }}>
+              {items.map(i => (
+                <button key={i.k} onClick={() => { setMenuOpen(false); i.enabled !== false && onNav(i.k); }}
+                  style={{
+                    background: 'none', border: 0, cursor: i.enabled === false ? 'not-allowed' : 'pointer',
+                    color: screen === i.k ? theme.accent : theme.fg,
+                    opacity: i.enabled === false ? 0.4 : 1,
+                    fontFamily: theme.serif, fontSize: 32, letterSpacing: '0.08em',
+                    textTransform: 'uppercase', padding: 0,
+                  }}>{i.label}</button>
+              ))}
+            </div>
+          )}
+        </>
+      ) : (
+        <div style={{
+          display: 'flex', gap: 28,
+          fontFamily: theme.sans, fontSize: 13,
+          letterSpacing: '0.08em', textTransform: 'uppercase',
+        }}>
+          {items.map(i => (
+            <button key={i.k} onClick={() => i.enabled !== false && onNav(i.k)}
+              style={{
+                background: 'none', border: 0, cursor: i.enabled === false ? 'not-allowed' : 'pointer',
+                color: screen === i.k ? theme.fg : theme.sub,
+                opacity: i.enabled === false ? 0.4 : 1,
+                fontFamily: 'inherit', fontSize: 'inherit', letterSpacing: 'inherit', textTransform: 'inherit',
+                padding: 0, whiteSpace: 'nowrap',
+              }}>{i.label}</button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
