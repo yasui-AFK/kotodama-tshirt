@@ -347,11 +347,36 @@ function HeroParticleCanvas() {
 
 function Landing({ theme, onStart }) {
   const SECTIONS = [
-    { num: '— 01 —', kanji: '誕生', sub: 'For a new life',      desc: 'Brush a name for the soul just arriving. A whisper of welcome — printed and kept.', cta: 'Begin a reading', img: 'assets/photos/birth.jpg' },
-    { num: '— 02 —', kanji: '育つ', sub: 'As a name grows',      desc: 'A name carries a child like a small lantern. Hear its sounds again, with new ears.', cta: 'Begin a reading', img: 'assets/photos/growth.jpg' },
-    { num: '— 03 —', kanji: '結ぶ', sub: 'Two names, one path',  desc: 'When two names meet, a third spirit is born. A scroll for the day you tied.',         cta: 'Begin a reading', img: 'assets/photos/union.jpg' },
-    { num: '— 04 —', kanji: '贈る', sub: 'For a friend',         desc: 'A name says "I see you." Brush a name for the friend who carries you.',              cta: 'Begin a reading', img: 'assets/photos/friend.jpg' },
-    { num: '— 05 —', kanji: '想う', sub: 'Behind kotodama',      desc: 'Why does a name carry a life? A story by the founder, in his own words.',           cta: 'Read the story',  img: 'assets/photos/memory.jpg' },
+    { num: '— 01 —', kanji: '誕生', sub: 'For a new life',
+      stanzas: [['Brush a name', 'for the soul just arriving.'],
+                ['A whisper of welcome —', 'printed and kept.']],
+      cta: 'Begin a reading',
+      imgs: ['assets/photos/birth.jpg', 'assets/photos/intro.jpg'],
+      align: 'left' },
+    { num: '— 02 —', kanji: '育つ', sub: 'As a name grows',
+      stanzas: [['A name carries a child', 'like a small lantern.'],
+                ['Hear its sounds again,', 'with new ears.']],
+      cta: 'Begin a reading',
+      imgs: ['assets/photos/growth.jpg', 'assets/photos/memory.jpg'],
+      align: 'right' },
+    { num: '— 03 —', kanji: '結ぶ', sub: 'Two names, one path',
+      stanzas: [['When two names meet,', 'a third spirit is born.'],
+                ['A scroll for the day', 'you tied.']],
+      cta: 'Begin a reading',
+      imgs: ['assets/photos/union.jpg', 'assets/photos/friend.jpg'],
+      align: 'left' },
+    { num: '— 04 —', kanji: '贈る', sub: 'For a friend',
+      stanzas: [['A name says', '"I see you."'],
+                ['Brush a name', 'for the friend who carries you.']],
+      cta: 'Begin a reading',
+      imgs: ['assets/photos/friend.jpg', 'assets/photos/union.jpg'],
+      align: 'right' },
+    { num: '— 05 —', kanji: '想う', sub: 'Behind kotodama',
+      stanzas: [['Why does a name', 'carry a life?'],
+                ['A story by the founder,', 'in his own words.']],
+      cta: 'Read the story',
+      imgs: ['assets/photos/memory.jpg', 'assets/photos/birth.jpg'],
+      align: 'left' },
   ];
 
   return (
@@ -516,51 +541,94 @@ function Landing({ theme, onStart }) {
         </div>
       </section>
 
-      {/* ============ 5 SECTIONS ============ */}
+      {/* ============ 5 SECTIONS (story-card layout) ============ */}
       {SECTIONS.map((s, i) => (
         <section key={i} style={{
-          position: 'relative', minHeight: '100vh',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          backgroundImage: `url('${s.img}')`,
-          backgroundSize: 'cover', backgroundPosition: 'center',
-          overflow: 'hidden',
+          background: theme.bg,
+          padding: 'clamp(80px, 12vw, 140px) clamp(24px, 5vw, 60px)',
+          textAlign: 'center',
         }}>
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'linear-gradient(180deg, rgba(10,8,6,0.4) 0%, rgba(10,8,6,0.25) 40%, rgba(10,8,6,0.75) 100%)',
-          }}/>
-          <div style={{
-            position: 'relative', zIndex: 2,
-            textAlign: 'center', padding: '40px 24px', maxWidth: 720,
-          }}>
+          <div style={{ maxWidth: 680, margin: '0 auto' }}>
+
             <div style={{
-              fontFamily: theme.mono, fontSize: 14,
-              letterSpacing: '0.4em', color: theme.fg,
-              textTransform: 'uppercase', opacity: 0.85,
-              marginBottom: 24,
+              fontFamily: theme.mono, fontSize: 12,
+              letterSpacing: '0.4em', color: theme.sub,
+              textTransform: 'uppercase',
+              marginBottom: 'clamp(28px, 5vw, 40px)',
             }}>{s.num}</div>
-            <h2 style={{
-              fontFamily: theme.serif,
-              fontSize: 'clamp(80px, 14vw, 180px)',
-              fontWeight: 300, letterSpacing: '0.12em',
-              lineHeight: 1, margin: '0 0 16px',
-              color: theme.fg,
-              textShadow: '0 0 32px rgba(0,0,0,0.6)',
-            }}>{s.kanji}</h2>
+
+            <h2 style={{ fontFamily: theme.serif, margin: '0 0 clamp(40px, 7vw, 64px)' }}>
+              <span style={{
+                display: 'block',
+                fontSize: 'clamp(56px, 12vw, 120px)',
+                fontWeight: 300, letterSpacing: '0.08em',
+                lineHeight: 1, color: theme.fg,
+              }}>{s.kanji}</span>
+              <span style={{
+                display: 'block',
+                fontSize: 'clamp(20px, 4vw, 30px)',
+                fontStyle: 'italic', fontWeight: 400,
+                color: theme.fg, opacity: 0.85,
+                marginTop: 'clamp(12px, 2vw, 18px)',
+                letterSpacing: '0.02em',
+              }}>{s.sub}</span>
+            </h2>
+
             <div style={{
-              fontFamily: theme.serif, fontStyle: 'italic',
-              fontSize: 'clamp(24px, 4vw, 28px)',
-              color: theme.fg, opacity: 0.92,
-              marginBottom: 48, letterSpacing: '0.04em',
-            }}>{s.sub}</div>
-            <p style={{
+              position: 'relative',
+              width: '100%', maxWidth: 520,
+              margin: '0 auto clamp(40px, 7vw, 64px)',
+              height: 'clamp(440px, 100vw, 620px)',
+            }}>
+              <div style={{
+                position: 'absolute',
+                [s.align === 'left' ? 'left' : 'right']: 0,
+                top: 0,
+                width: '72%', height: '68%',
+                overflow: 'hidden',
+              }}>
+                <img src={s.imgs[0]} alt={s.kanji} style={{
+                  width: '100%', height: '100%',
+                  objectFit: 'cover', display: 'block',
+                  filter: 'brightness(0.85)',
+                }}/>
+              </div>
+              <div style={{
+                position: 'absolute',
+                [s.align === 'left' ? 'right' : 'left']: 0,
+                bottom: 0,
+                width: '55%', height: '52%',
+                overflow: 'hidden',
+              }}>
+                <img src={s.imgs[1]} alt="" style={{
+                  width: '100%', height: '100%',
+                  objectFit: 'cover', display: 'block',
+                  filter: 'brightness(0.85)',
+                }}/>
+              </div>
+            </div>
+
+            <div style={{
               fontFamily: theme.serif,
-              fontSize: 'clamp(22px, 4.5vw, 24px)',
-              lineHeight: 1.7, color: theme.fg, opacity: 0.92,
-              margin: '0 auto 56px', maxWidth: 560,
-              fontStyle: 'italic',
-              textShadow: '0 0 24px rgba(0,0,0,0.6)',
-            }}>{s.desc}</p>
+              fontSize: 'clamp(17px, 3.5vw, 22px)',
+              lineHeight: 1.65, fontStyle: 'italic',
+              color: theme.fg, opacity: 0.92,
+              margin: '0 auto clamp(40px, 7vw, 56px)',
+              maxWidth: 560,
+              display: 'flex', flexDirection: 'column',
+              gap: 'clamp(22px, 4vw, 32px)',
+            }}>
+              {s.stanzas.map((lines, j) => (
+                <p key={j} style={{ margin: 0 }}>
+                  {lines.map((l, k) => (
+                    <React.Fragment key={k}>
+                      {l}{k < lines.length - 1 && <br/>}
+                    </React.Fragment>
+                  ))}
+                </p>
+              ))}
+            </div>
+
             <button onClick={onStart} style={{
               padding: 'clamp(14px, 2.5vw, 22px) clamp(28px, 6vw, 56px)',
               background: 'transparent', color: theme.fg,
@@ -569,6 +637,7 @@ function Landing({ theme, onStart }) {
               letterSpacing: '0.22em', textTransform: 'uppercase',
               cursor: 'pointer', transition: 'all 0.3s',
             }}>{s.cta} →</button>
+
           </div>
         </section>
       ))}
