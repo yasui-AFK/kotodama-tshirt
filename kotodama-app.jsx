@@ -461,7 +461,7 @@ window.KotodamaApp = function KotodamaApp({ theme, initialScreen = 'landing', in
       )}
 
       {screen === 'reading' && hasReading && (
-        <KReading theme={theme} name={name} onShop={() => nav('products')} onShare={() => setShareOpen(true)}/>
+        <KReading theme={theme} name={name} onShop={() => nav('products')} onShare={() => setShareOpen(true)} onBack={() => nav('input')}/>
       )}
       {screen === 'reading' && !hasReading && (
         <div style={{ padding: 60, textAlign: 'center' }}>
