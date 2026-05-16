@@ -35,19 +35,19 @@ window.KT_THEMES = {
     tone: 'midnight',
   },
   sakura: {
-    name: 'Sakura Soft',
-    bg: '#f5ecdf',
-    fg: '#3a2230',
-    sub: 'rgba(58,34,48,0.6)',
-    line: 'rgba(58,34,48,0.15)',
-    paper: '#faf2e6',
-    accent: '#b85d6e',
-    accent2: '#d4a59b',
-    cardBg: 'rgba(255,250,242,0.7)',
+    name: 'Sumi Noir',
+    bg: '#000000',
+    fg: '#f0e0c8',
+    sub: 'rgba(240,224,200,0.6)',
+    line: 'rgba(240,224,200,0.15)',
+    paper: '#0a0806',
+    accent: '#b7282e',
+    accent2: '#d8a8b0',
+    cardBg: 'rgba(240,224,200,0.04)',
     serif: '"Shippori Mincho", "Noto Serif JP", serif',
     sans: '"Inter", system-ui, sans-serif',
     mono: '"JetBrains Mono", monospace',
-    tone: 'warm',
+    tone: 'midnight',
   },
 };
 
@@ -194,103 +194,277 @@ function KotodamaBrushBackdrop({ theme }) {
   );
 }
 
+function HeroParticleCanvas() {
+  const canvasRef = useRefK(null);
+  useEffectK(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let w, h, animId;
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.width = window.innerWidth * dpr;
+      h = canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+    }
+    window.addEventListener('resize', resize);
+    resize();
+    const blobs = [
+      { c: [255, 175, 110], cx: 0.15, cy: 0.18, r: 0.22, px: 0.0, py: 1.5, sx: 0.00028, sy: 0.00038 },
+      { c: [255, 210, 130], cx: 0.78, cy: 0.16, r: 0.20, px: 1.2, py: 0.5, sx: 0.00040, sy: 0.00029 },
+      { c: [255, 195, 165], cx: 0.48, cy: 0.28, r: 0.18, px: 2.1, py: 2.4, sx: 0.00033, sy: 0.00045 },
+      { c: [255, 235, 215], cx: 0.30, cy: 0.42, r: 0.16, px: 3.0, py: 1.0, sx: 0.00048, sy: 0.00034 },
+      { c: [255, 180,  95], cx: 0.62, cy: 0.40, r: 0.20, px: 0.8, py: 2.8, sx: 0.00037, sy: 0.00042 },
+      { c: [255, 215, 140], cx: 0.85, cy: 0.50, r: 0.18, px: 1.7, py: 0.2, sx: 0.00031, sy: 0.00036 },
+      { c: [255, 200, 170], cx: 0.10, cy: 0.55, r: 0.20, px: 2.4, py: 1.8, sx: 0.00042, sy: 0.00031 },
+      { c: [255, 175, 100], cx: 0.45, cy: 0.65, r: 0.22, px: 0.5, py: 2.1, sx: 0.00029, sy: 0.00044 },
+      { c: [255, 240, 220], cx: 0.72, cy: 0.72, r: 0.16, px: 1.9, py: 0.8, sx: 0.00046, sy: 0.00027 },
+      { c: [255, 195, 130], cx: 0.20, cy: 0.85, r: 0.18, px: 2.7, py: 2.3, sx: 0.00035, sy: 0.00040 },
+      { c: [255, 220, 150], cx: 0.55, cy: 0.90, r: 0.20, px: 0.3, py: 1.2, sx: 0.00038, sy: 0.00033 },
+      { c: [255, 185, 110], cx: 0.90, cy: 0.85, r: 0.18, px: 1.4, py: 2.6, sx: 0.00041, sy: 0.00037 },
+    ];
+    function draw(t) {
+      ctx.clearRect(0, 0, w, h);
+      ctx.globalCompositeOperation = 'lighter';
+      const minDim = Math.min(w, h);
+      blobs.forEach(b => {
+        const xOff = Math.sin(b.px + t * b.sx) * w * 0.18;
+        const yOff = Math.cos(b.py + t * b.sy) * h * 0.15;
+        const x = b.cx * w + xOff;
+        const y = b.cy * h + yOff;
+        const r = b.r * minDim * (1 + 0.1 * Math.sin(t * 0.0004 + b.px));
+        const [R, G, B] = b.c;
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+        grad.addColorStop(0,   `rgba(${R},${G},${B},0.85)`);
+        grad.addColorStop(0.3, `rgba(${R},${G},${B},0.35)`);
+        grad.addColorStop(0.6, `rgba(${R},${G},${B},0.10)`);
+        grad.addColorStop(1,   `rgba(${R},${G},${B},0)`);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      animId = requestAnimationFrame(draw);
+    }
+    animId = requestAnimationFrame(draw);
+    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize); };
+  }, []);
+  return <canvas ref={canvasRef} aria-hidden style={{
+    position: 'absolute', inset: 0, zIndex: 2,
+    width: '100%', height: '100%',
+    pointerEvents: 'none', filter: 'blur(40px)',
+    mixBlendMode: 'screen',
+    animation: 'kt-particles-fade 1.8s cubic-bezier(0.4, 0, 0.6, 1) 6s forwards',
+  }}/>;
+}
+
 function Landing({ theme, onStart }) {
+  const SECTIONS = [
+    { num: '— 01 —', kanji: '誕生', sub: 'For a new life',      desc: 'Brush a name for the soul just arriving. A whisper of welcome — printed and kept.', cta: 'Begin a reading', img: 'assets/photos/birth.jpg' },
+    { num: '— 02 —', kanji: '育つ', sub: 'As a name grows',      desc: 'A name carries a child like a small lantern. Hear its sounds again, with new ears.', cta: 'Begin a reading', img: 'assets/photos/growth.jpg' },
+    { num: '— 03 —', kanji: '結ぶ', sub: 'Two names, one path',  desc: 'When two names meet, a third spirit is born. A scroll for the day you tied.',         cta: 'Begin a reading', img: 'assets/photos/union.jpg' },
+    { num: '— 04 —', kanji: '贈る', sub: 'For a friend',         desc: 'A name says "I see you." Brush a name for the friend who carries you.',              cta: 'Begin a reading', img: 'assets/photos/friend.jpg' },
+    { num: '— 05 —', kanji: '想う', sub: 'Behind kotodama',      desc: 'Why does a name carry a life? A story by the founder, in his own words.',           cta: 'Read the story',  img: 'assets/photos/memory.jpg' },
+  ];
+
   return (
-    <div style={{ padding: '80px 60px 60px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-      <KotodamaBrushBackdrop theme={theme} />
-
-      <div style={{ position: 'relative', maxWidth: 900, margin: '0 auto', zIndex: 1 }}>
+    <div style={{ position: 'relative', background: theme.bg }}>
+      {/* ============ HERO ============ */}
+      <section style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden', background: theme.bg }}>
+        {/* video background */}
         <div style={{
-          fontFamily: theme.mono, fontSize: 11, letterSpacing: '0.32em', textTransform: 'uppercase',
-          color: theme.sub, marginBottom: 56,
-        }}>言霊 · KO · TO · DA · MA</div>
-
-        <div style={{
-          position: 'relative', perspective: '1400px',
-          marginBottom: 36, minHeight: 220,
+          position: 'absolute', inset: 0, zIndex: 0, opacity: 0,
+          animation: 'kt-video-in 1.8s cubic-bezier(0.25, 0.1, 0.25, 1) 6s forwards',
+          overflow: 'hidden',
         }}>
-          <h1 style={{
-            position: 'relative', zIndex: 1,
-            fontFamily: theme.serif, fontWeight: 500,
-            fontSize: 'clamp(72px, 11vw, 156px)',
-            lineHeight: 1, letterSpacing: '0.04em', margin: 0,
-            color: theme.fg, display: 'flex', justifyContent: 'center', gap: '0.04em',
-            transformStyle: 'preserve-3d',
-          }}>
-            {[
-              { ch: 'K', anim: 'kt-fly',   delay: 0.2 },
-              { ch: 'O', anim: 'kt-rise',  delay: 0.9 },
-              { ch: 'T', anim: 'kt-drop',  delay: 1.6 },
-              { ch: 'O', anim: 'kt-bloom', delay: 2.3 },
-              { ch: 'D', anim: 'kt-drift', delay: 3.0 },
-              { ch: 'A', anim: 'kt-spin',  delay: 3.7 },
-              { ch: 'M', anim: 'kt-drift-r', delay: 4.4 },
-              { ch: 'A', anim: 'kt-rise',  delay: 5.1 },
-            ].map((l, i) => (
-              <span key={i} style={{
-                display: 'inline-block',
-                animation: `${l.anim} 1.6s cubic-bezier(.16,.84,.3,1.02) ${l.delay}s both`,
-                color: i === 3 ? theme.accent2 : theme.fg,
-                transformStyle: 'preserve-3d',
-              }}>{l.ch}</span>
-            ))}
-          </h1>
-          <div aria-hidden style={{
-            position: 'absolute', left: '50%', bottom: -10, transform: 'translateX(-50%)',
-            width: '70%', height: 16,
-            background: `radial-gradient(ellipse at center, ${theme.fg}22, transparent 70%)`,
-            animation: 'kt-shadow 1.6s ease-out 6.4s both',
+          <video src="assets/hero.mp4" autoPlay muted loop playsInline
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(180deg, rgba(10,8,6,0.45) 0%, rgba(10,8,6,0.25) 50%, rgba(10,8,6,0.7) 100%)',
+            pointerEvents: 'none',
           }}/>
         </div>
 
-        <h2 style={{
-          fontFamily: theme.serif, fontSize: 38, lineHeight: 1.2, letterSpacing: '-0.005em',
-          color: theme.fg, fontWeight: 400, margin: '0 0 24px',
-          animation: 'kt-fadeup 1.2s ease-out 7.0s both',
+        {/* 言霊 brushed kanji backdrop (writes 0-8.3s, fades 10-12s) */}
+        <div aria-hidden style={{
+          position: 'absolute', inset: 0, zIndex: 1,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          pointerEvents: 'none', opacity: 0.65,
+          animation: 'kt-kanji-out 2s cubic-bezier(0.25, 0.1, 0.25, 1) 10s forwards',
         }}>
-          Give someone the <em style={{ fontStyle: 'italic', color: theme.accent2 }}>spirit</em> of their name.
-        </h2>
-
-        <p style={{
-          fontFamily: theme.serif, fontSize: 18, lineHeight: 1.6, color: theme.sub,
-          maxWidth: 520, margin: '0 auto 48px',
-          animation: 'kt-fadeup 1.2s ease-out 7.3s both',
-        }}>
-          In the old Japanese tradition, every sound carries a meaning — a small spirit called <em>kotodama</em>.
-          Enter a name and we will brush its hidden song — for you, or for someone you love.
-        </p>
-
-        <button onClick={onStart} style={{
-          animation: 'kt-fadeup 1.2s ease-out 7.6s both',
-          background: theme.fg, color: theme.bg, border: 0, padding: '18px 44px',
-          fontFamily: theme.sans, fontSize: 13, letterSpacing: '0.18em', textTransform: 'uppercase',
-          cursor: 'pointer', borderRadius: 0,
-        }}>Begin a reading</button>
-
-        <div style={{
-          marginTop: 16, fontFamily: theme.sans, fontSize: 12, color: theme.sub,
-          animation: 'kt-fadeup 1.2s ease-out 7.8s both',
-        }}>Free · takes about a minute</div>
-
-        <div style={{
-          marginTop: 96, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 48,
-          textAlign: 'left', borderTop: `1px solid ${theme.line}`, paddingTop: 48,
-        }}>
-          {[
-            { kana: '一', en: 'one', t: 'A reading for you', d: 'Each name is brushed by hand into kana, then read sound by sound.' },
-            { kana: '二', en: 'two', t: 'A scroll to keep',   d: 'Take your reading home as a printable PDF or hand-painted scroll.' },
-            { kana: '三', en: 'three', t: 'A name to wear',   d: 'Tees, totes and small things — your name in archival ink.' },
-          ].map((p, i) => (
-            <div key={i}>
-              <div style={{ fontFamily: theme.serif, fontSize: 38, color: theme.fg, marginBottom: 10 }}>{p.kana}</div>
-              <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase',
-                            color: theme.sub, marginBottom: 8 }}>— {p.en}</div>
-              <div style={{ fontFamily: theme.serif, fontSize: 18, color: theme.fg, marginBottom: 8 }}>{p.t}</div>
-              <div style={{ fontFamily: theme.serif, fontSize: 14, lineHeight: 1.55, color: theme.sub }}>{p.d}</div>
-            </div>
-          ))}
+          <svg viewBox="0 0 440 220" style={{ width: 'min(720px, 80vw)', display: 'block', overflow: 'visible' }}>
+            <text x="110" y="180" textAnchor="middle" style={{
+              fontFamily: theme.serif, fontWeight: 700, fontSize: 210,
+              fill: theme.fg, fillOpacity: 0, stroke: theme.fg, strokeWidth: 1.4,
+              strokeDasharray: 1300, strokeDashoffset: 1300,
+              animation: 'kt-brush-draw 4.5s ease-out 0.5s forwards, kt-brush-fill 1.5s ease-out 7s forwards',
+            }}>言</text>
+            <text x="330" y="180" textAnchor="middle" style={{
+              fontFamily: theme.serif, fontWeight: 700, fontSize: 210,
+              fill: theme.fg, fillOpacity: 0, stroke: theme.fg, strokeWidth: 1.4,
+              strokeDasharray: 1600, strokeDashoffset: 1600,
+              animation: 'kt-brush-draw 5.5s ease-out 2.8s forwards, kt-brush-fill 1.5s ease-out 7s forwards',
+            }}>霊</text>
+          </svg>
         </div>
-      </div>
+
+        {/* canvas bokeh blobs (CRAZY-style) */}
+        <HeroParticleCanvas />
+
+        {/* hero text */}
+        <div style={{
+          position: 'relative', zIndex: 10,
+          minHeight: '100vh',
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          textAlign: 'center',
+          padding: '40px 24px',
+          maxWidth: 900, margin: '0 auto',
+        }}>
+          <h1 style={{
+            fontFamily: theme.serif,
+            fontSize: 'clamp(56px, 11vw, 180px)',
+            fontWeight: 300, letterSpacing: '0.05em',
+            margin: '0 0 56px', color: theme.fg,
+            display: 'flex', justifyContent: 'center', gap: '0.04em',
+            lineHeight: 1, textShadow: '0 0 32px rgba(0,0,0,0.5)',
+          }}>
+            {[
+              { ch: 'K', anim: 'kt-fade-up',    delay: 1.0 },
+              { ch: 'O', anim: 'kt-fade-up',    delay: 1.2 },
+              { ch: 'T', anim: 'kt-fade-down',  delay: 1.4 },
+              { ch: 'O', anim: 'kt-fade-down',  delay: 1.6, accent: true },
+              { ch: 'D', anim: 'kt-fade-left',  delay: 1.8, accent: true },
+              { ch: 'A', anim: 'kt-fade-left',  delay: 2.0 },
+              { ch: 'M', anim: 'kt-fade-right', delay: 2.2 },
+              { ch: 'A', anim: 'kt-fade-right', delay: 2.4 },
+            ].map((l, i) => (
+              <span key={i} style={{
+                display: 'inline-block', opacity: 0,
+                animation: `${l.anim} 1.5s cubic-bezier(0.25, 0.1, 0.25, 1) ${l.delay}s forwards`,
+                color: l.accent ? theme.accent : theme.fg,
+              }}>{l.ch}</span>
+            ))}
+          </h1>
+          <div style={{
+            fontFamily: theme.serif,
+            fontSize: 'clamp(24px, 5vw, 32px)',
+            lineHeight: 1.7, color: theme.fg,
+            fontStyle: 'italic', maxWidth: 720,
+            textShadow: '0 0 24px rgba(0,0,0,0.5)', opacity: 0.92,
+          }}>
+            <p style={{ margin: 0, opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 11.5s forwards' }}>
+              In the beginning, the <span style={{ color: theme.accent }}>Word</span>.
+            </p>
+            <p style={{ margin: 0, marginBottom: '1.6em', opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 11.9s forwards' }}>
+              Through the Word, the <span style={{ color: theme.accent }}>world</span>.
+            </p>
+            <p style={{ margin: 0, opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 12.5s forwards' }}>
+              You were given a <span style={{ color: theme.accent }}>name</span>.
+            </p>
+            <p style={{ margin: 0, opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 12.9s forwards' }}>
+              Through your name, your <span style={{ color: theme.accent }}>life</span>.
+            </p>
+          </div>
+
+          {/* Hero CTA — always visible, floats gently */}
+          <button onClick={onStart} style={{
+            marginTop: 56,
+            padding: '22px 56px',
+            background: 'transparent', color: theme.fg,
+            border: `1px solid ${theme.fg}`,
+            fontFamily: theme.mono, fontSize: 15,
+            letterSpacing: '0.24em', textTransform: 'uppercase',
+            cursor: 'pointer',
+            textShadow: '0 0 16px rgba(0,0,0,0.6)',
+            animation: 'kt-float 3.5s ease-in-out infinite',
+          }}>Begin a reading →</button>
+        </div>
+      </section>
+
+      {/* ============ INTRO ============ */}
+      <section style={{
+        padding: '100px 24px', textAlign: 'center',
+        background: theme.bg,
+      }}>
+        <div style={{ maxWidth: 720, margin: '0 auto' }}>
+          <div style={{
+            fontFamily: theme.serif,
+            fontSize: 'clamp(56px, 9vw, 110px)',
+            fontWeight: 300, letterSpacing: '0.3em',
+            color: theme.fg, marginBottom: 24,
+          }}>言霊</div>
+          <p style={{
+            fontFamily: theme.serif,
+            fontSize: 'clamp(22px, 4.5vw, 26px)',
+            lineHeight: 1.8, color: theme.fg, opacity: 0.85,
+            fontStyle: 'italic', margin: 0,
+          }}>
+            In the old Japanese tradition,<br/>
+            every sound carries a meaning — a small spirit called <span style={{ color: theme.accent, fontStyle: 'normal' }}>kotodama</span>.<br/>
+            Brush a name for any chapter of a life.
+          </p>
+        </div>
+      </section>
+
+      {/* ============ 5 SECTIONS ============ */}
+      {SECTIONS.map((s, i) => (
+        <section key={i} style={{
+          position: 'relative', minHeight: '100vh',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          backgroundImage: `url('${s.img}')`,
+          backgroundSize: 'cover', backgroundPosition: 'center',
+          overflow: 'hidden',
+        }}>
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(180deg, rgba(10,8,6,0.4) 0%, rgba(10,8,6,0.25) 40%, rgba(10,8,6,0.75) 100%)',
+          }}/>
+          <div style={{
+            position: 'relative', zIndex: 2,
+            textAlign: 'center', padding: '40px 24px', maxWidth: 720,
+          }}>
+            <div style={{
+              fontFamily: theme.mono, fontSize: 14,
+              letterSpacing: '0.4em', color: theme.fg,
+              textTransform: 'uppercase', opacity: 0.85,
+              marginBottom: 24,
+            }}>{s.num}</div>
+            <h2 style={{
+              fontFamily: theme.serif,
+              fontSize: 'clamp(80px, 14vw, 180px)',
+              fontWeight: 300, letterSpacing: '0.12em',
+              lineHeight: 1, margin: '0 0 16px',
+              color: theme.fg,
+              textShadow: '0 0 32px rgba(0,0,0,0.6)',
+            }}>{s.kanji}</h2>
+            <div style={{
+              fontFamily: theme.serif, fontStyle: 'italic',
+              fontSize: 'clamp(24px, 4vw, 28px)',
+              color: theme.fg, opacity: 0.92,
+              marginBottom: 48, letterSpacing: '0.04em',
+            }}>{s.sub}</div>
+            <p style={{
+              fontFamily: theme.serif,
+              fontSize: 'clamp(22px, 4.5vw, 24px)',
+              lineHeight: 1.7, color: theme.fg, opacity: 0.92,
+              margin: '0 auto 56px', maxWidth: 560,
+              fontStyle: 'italic',
+              textShadow: '0 0 24px rgba(0,0,0,0.6)',
+            }}>{s.desc}</p>
+            <button onClick={onStart} style={{
+              padding: '24px 60px',
+              background: 'transparent', color: theme.fg,
+              border: `1px solid ${theme.fg}`,
+              fontFamily: theme.mono, fontSize: 16,
+              letterSpacing: '0.24em', textTransform: 'uppercase',
+              cursor: 'pointer', transition: 'all 0.3s',
+            }}>{s.cta} →</button>
+          </div>
+        </section>
+      ))}
     </div>
   );
 }
@@ -311,7 +485,24 @@ function NameInput({ theme, name, setName, onSubmit }) {
   };
 
   return (
-    <div style={{ padding: '80px 60px', textAlign: 'center', minHeight: 600 }}>
+    <div style={{ padding: '80px 60px', textAlign: 'center', minHeight: 600, background: theme.bg, position: 'relative', overflow: 'hidden' }}>
+      {/* 言霊 brushed kanji backdrop */}
+      <div aria-hidden style={{
+        position: 'absolute', inset: 0, zIndex: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        pointerEvents: 'none', opacity: 0.06,
+      }}>
+        <svg viewBox="0 0 440 220" style={{ width: 'min(900px, 75vw)', display: 'block' }}>
+          <text x="110" y="180" textAnchor="middle" style={{
+            fontFamily: theme.serif, fontWeight: 700, fontSize: 210, fill: theme.fg,
+          }}>言</text>
+          <text x="330" y="180" textAnchor="middle" style={{
+            fontFamily: theme.serif, fontWeight: 700, fontSize: 210, fill: theme.fg,
+          }}>霊</text>
+        </svg>
+      </div>
+
+      <div style={{ position: 'relative', zIndex: 1 }}>
       <div style={{
         fontFamily: theme.mono, fontSize: 11, letterSpacing: '0.32em', textTransform: 'uppercase',
         color: theme.sub, marginBottom: 28,
@@ -383,6 +574,7 @@ function NameInput({ theme, name, setName, onSubmit }) {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
@@ -395,11 +587,28 @@ function Reading({ theme, name, onShop, onShare }) {
   const active = reading.syllables[activeIdx];
 
   return (
-    <div style={{ padding: '60px 60px 80px' }}>
+    <div style={{ padding: '60px 60px 80px', position: 'relative', overflow: 'hidden', background: theme.bg }}>
+      {/* 言霊 brushed kanji backdrop — very subtle, behind everything */}
+      <div aria-hidden style={{
+        position: 'absolute', inset: 0, zIndex: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        pointerEvents: 'none', opacity: 0.06,
+      }}>
+        <svg viewBox="0 0 440 220" style={{ width: 'min(900px, 75vw)', display: 'block' }}>
+          <text x="110" y="180" textAnchor="middle" style={{
+            fontFamily: theme.serif, fontWeight: 700, fontSize: 210, fill: theme.fg,
+          }}>言</text>
+          <text x="330" y="180" textAnchor="middle" style={{
+            fontFamily: theme.serif, fontWeight: 700, fontSize: 210, fill: theme.fg,
+          }}>霊</text>
+        </svg>
+      </div>
+
+      <div style={{ position: 'relative', zIndex: 1 }}>
       <div style={{
         textAlign: 'center', fontFamily: theme.mono, fontSize: 11, letterSpacing: '0.32em',
         textTransform: 'uppercase', color: theme.sub, marginBottom: 24,
-      }}>A KOTODAMA READING FOR</div>
+      }}>言霊 · A reading for</div>
 
       <div style={{ textAlign: 'center', marginBottom: 12 }}>
         <span style={{
@@ -410,21 +619,23 @@ function Reading({ theme, name, onShop, onShare }) {
 
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 44, gap: 8 }}>
         <window.BrushStroke width={90} height={12} color={theme.fg} seed={3} opacity={0.7}/>
-        <window.BrushStroke width={50} height={12} color={theme.accent2} seed={7} opacity={0.65}/>
+        <window.BrushStroke width={50} height={12} color={theme.accent} seed={7} opacity={0.7}/>
       </div>
 
       <div style={{
         textAlign: 'center', maxWidth: 640, margin: '0 auto 64px', padding: '36px 32px',
-        borderTop: `1px solid ${theme.accent2}`, borderBottom: `1px solid ${theme.line}`,
-        background: theme.cardBg, border: `1px solid ${theme.line}`,
+        background: 'rgba(0,0,0,0.45)',
+        borderTop: `1px solid ${theme.line}`,
+        borderBottom: `1px solid ${theme.line}`,
+        backdropFilter: 'blur(8px)',
       }}>
         <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: '0.28em',
                       textTransform: 'uppercase', color: theme.sub, marginBottom: 14 }}>
-          YOUR ARCHETYPE
+          Archetype
         </div>
         <div style={{ fontFamily: theme.serif, fontSize: 36, color: theme.fg, marginBottom: 14,
                       fontStyle: 'italic' }}>
-          <span style={{ color: theme.accent2 }}>—</span> {reading.archetype.name} <span style={{ color: theme.accent2 }}>—</span>
+          <span style={{ color: theme.accent }}>—</span> {reading.archetype.name} <span style={{ color: theme.accent }}>—</span>
         </div>
         <div style={{ fontFamily: theme.serif, fontStyle: 'italic', fontSize: 17, lineHeight: 1.55,
                       color: theme.sub, maxWidth: 480, margin: '0 auto' }}>
@@ -517,16 +728,20 @@ function Reading({ theme, name, onShop, onShare }) {
       </div>
 
       <div style={{
-        marginTop: 80, padding: '40px 36px', background: theme.cardBg, border: `1px solid ${theme.line}`,
+        marginTop: 80, padding: '40px 36px',
+        background: 'rgba(0,0,0,0.45)',
+        borderTop: `1px solid ${theme.line}`,
+        borderBottom: `1px solid ${theme.line}`,
+        backdropFilter: 'blur(8px)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32,
       }}>
         <div>
           <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: '0.24em',
                         textTransform: 'uppercase', color: theme.sub, marginBottom: 10 }}>
-            CARRY YOUR READING WITH YOU
+            Keep this spirit close
           </div>
           <div style={{ fontFamily: theme.serif, fontSize: 24, color: theme.fg }}>
-            Take {name}'s reading home — as a scroll, a tee, or a keepsake.
+            Make {name}'s reading yours — a scroll, a tee, or a quiet keepsake.
           </div>
         </div>
         <div style={{ display: 'flex', gap: 12, flexShrink: 0, flexWrap: 'wrap' }}>
@@ -546,6 +761,7 @@ function Reading({ theme, name, onShop, onShare }) {
             textTransform: 'uppercase', cursor: 'pointer',
           }}>Shop the collection →</button>
         </div>
+      </div>
       </div>
     </div>
   );

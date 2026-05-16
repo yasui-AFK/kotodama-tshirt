@@ -15,6 +15,9 @@ marketing/
 test-images/
 kotodama-site-test-*.png
 
+# Remotion video generation project (生成ソース、本番には mp4 だけ assets/ にコピー)
+hero-video/
+
 # 競合調査・ローカル確認用スクショ（リポに含めない）
 birthdate-*.png
 tatcha-*.png

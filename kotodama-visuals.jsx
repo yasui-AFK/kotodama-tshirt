@@ -229,6 +229,39 @@ if (!document.getElementById('kt-anims')) {
       from { stroke-dashoffset: 2400; }
       to { stroke-dashoffset: 0; }
     }
+    @keyframes kt-fade-up {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes kt-fade-down {
+      from { opacity: 0; transform: translateY(-40px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes kt-fade-left {
+      from { opacity: 0; transform: translateX(-40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes kt-fade-right {
+      from { opacity: 0; transform: translateX(40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes kt-fade-up-soft {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes kt-kanji-out {
+      to { opacity: 0; }
+    }
+    @keyframes kt-video-in {
+      to { opacity: 1; }
+    }
+    @keyframes kt-particles-fade {
+      to { opacity: 0; visibility: hidden; }
+    }
+    @keyframes kt-float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
     @keyframes kt-pulse {
       0%, 100% { opacity: 0.4; }
       50% { opacity: 1; }
