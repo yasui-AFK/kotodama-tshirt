@@ -654,7 +654,7 @@ function NameInput({ theme, name, setName, onSubmit }) {
   );
 }
 
-function Reading({ theme, name, onShop, onShare }) {
+function Reading({ theme, name, onShop, onShare, onBack }) {
   const reading = useMemoK(() => window.readName(name), [name]);
   const [activeIdx, setActiveIdx] = useStateK(0);
 
@@ -680,6 +680,14 @@ function Reading({ theme, name, onShop, onShare }) {
       </div>
 
       <div style={{ position: 'relative', zIndex: 1 }}>
+      {onBack && (
+        <button onClick={onBack} style={{
+          background: 'none', border: 0, cursor: 'pointer',
+          color: theme.sub, fontFamily: theme.mono, fontSize: 11,
+          letterSpacing: '0.2em', textTransform: 'uppercase',
+          padding: 0, marginBottom: 32, display: 'inline-block',
+        }}>← Try a different name</button>
+      )}
       <div style={{
         textAlign: 'center', fontFamily: theme.mono, fontSize: 11, letterSpacing: '0.32em',
         textTransform: 'uppercase', color: theme.sub, marginBottom: 24,
