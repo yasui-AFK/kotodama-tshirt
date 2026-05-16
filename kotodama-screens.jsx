@@ -597,7 +597,7 @@ function NameInput({ theme, name, setName, onSubmit }) {
       <div aria-hidden style={{
         position: 'absolute', inset: 0, zIndex: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        pointerEvents: 'none', opacity: 0.06,
+        pointerEvents: 'none', opacity: 0.35,
       }}>
         <svg viewBox="0 0 440 220" style={{ width: 'min(900px, 75vw)', display: 'block' }}>
           <text x="110" y="180" textAnchor="middle" style={{
@@ -699,7 +699,7 @@ function Reading({ theme, name, onShop, onShare, onBack }) {
       <div aria-hidden style={{
         position: 'absolute', inset: 0, zIndex: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        pointerEvents: 'none', opacity: 0.15,
+        pointerEvents: 'none', opacity: 0.35,
       }}>
         <svg viewBox="0 0 440 220" style={{ width: 'min(900px, 75vw)', display: 'block' }}>
           <text x="110" y="180" textAnchor="middle" style={{
