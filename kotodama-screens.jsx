@@ -468,13 +468,13 @@ function Landing({ theme, onStart }) {
 
           <h2 style={{
             fontFamily: theme.serif,
-            fontSize: 'clamp(32px, 7vw, 56px)',
-            fontWeight: 400, lineHeight: 1.25,
-            letterSpacing: '0.04em', color: theme.fg,
+            fontSize: 'clamp(56px, 12vw, 120px)',
+            fontWeight: 300, lineHeight: 1,
+            letterSpacing: '0.32em', color: theme.fg,
             margin: '0 0 clamp(48px, 8vw, 80px)',
+            paddingLeft: '0.32em',
           }}>
-            The Spirit<br/>
-            of <em style={{ fontStyle: 'italic' }}>the Word</em>
+            言霊
           </h2>
 
           <div style={{
@@ -484,11 +484,11 @@ function Landing({ theme, onStart }) {
             aspectRatio: '3/4', overflow: 'hidden',
           }}>
             <img src="assets/photos/intro.jpg"
-              alt="A name carried across generations"
+              alt="言霊 — the spirit of the word"
               style={{
                 width: '100%', height: '100%',
                 objectFit: 'cover', display: 'block',
-                filter: 'brightness(0.92)',
+                filter: 'sepia(0.7) brightness(0.85) contrast(0.95)',
               }}/>
           </div>
 
