@@ -194,6 +194,45 @@ function KotodamaBrushBackdrop({ theme }) {
   );
 }
 
+function HeroVideo() {
+  const videoRef = useRefK(null);
+  useEffectK(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    v.playsInline = true;
+    const tryPlay = () => v.play().catch(() => {});
+    tryPlay();
+    // retry on user interaction (iOS low-power mode workaround)
+    const onTouch = () => { tryPlay(); document.removeEventListener('touchstart', onTouch); };
+    document.addEventListener('touchstart', onTouch, { once: true });
+    return () => document.removeEventListener('touchstart', onTouch);
+  }, []);
+  return (
+    <div style={{
+      position: 'absolute', inset: 0, zIndex: 0, opacity: 0,
+      animation: 'kt-video-in 1.8s cubic-bezier(0.25, 0.1, 0.25, 1) 6s forwards',
+      overflow: 'hidden',
+      pointerEvents: 'none',
+    }}>
+      <video
+        ref={videoRef}
+        src="assets/hero.mp4"
+        autoPlay muted loop playsInline preload="auto"
+        poster="assets/photos/birth.jpg"
+        controls={false}
+        disablePictureInPicture
+        style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
+      />
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(180deg, rgba(10,8,6,0.45) 0%, rgba(10,8,6,0.25) 50%, rgba(10,8,6,0.7) 100%)',
+        pointerEvents: 'none',
+      }}/>
+    </div>
+  );
+}
+
 function HeroParticleCanvas() {
   const canvasRef = useRefK(null);
   useEffectK(() => {
@@ -273,19 +312,8 @@ function Landing({ theme, onStart }) {
       {/* ============ HERO ============ */}
       <section style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden', background: theme.bg }}>
         {/* video background */}
-        <div style={{
-          position: 'absolute', inset: 0, zIndex: 0, opacity: 0,
-          animation: 'kt-video-in 1.8s cubic-bezier(0.25, 0.1, 0.25, 1) 6s forwards',
-          overflow: 'hidden',
-        }}>
-          <video src="assets/hero.mp4" autoPlay muted loop playsInline
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'linear-gradient(180deg, rgba(10,8,6,0.45) 0%, rgba(10,8,6,0.25) 50%, rgba(10,8,6,0.7) 100%)',
-            pointerEvents: 'none',
-          }}/>
-        </div>
+        <HeroVideo />
+
 
         {/* 言霊 brushed kanji backdrop (writes 0-8.3s, fades 10-12s) */}
         <div aria-hidden style={{
