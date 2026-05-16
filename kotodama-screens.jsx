@@ -662,7 +662,7 @@ function Reading({ theme, name, onShop, onShare }) {
   const active = reading.syllables[activeIdx];
 
   return (
-    <div style={{ padding: '60px 60px 80px', position: 'relative', overflow: 'hidden', background: theme.bg }}>
+    <div style={{ padding: 'clamp(40px, 6vw, 60px) clamp(20px, 5vw, 60px) 80px', position: 'relative', overflow: 'hidden', background: theme.bg }}>
       {/* 言霊 brushed kanji backdrop — visible behind reading */}
       <div aria-hidden style={{
         position: 'absolute', inset: 0, zIndex: 0,
@@ -718,24 +718,37 @@ function Reading({ theme, name, onShop, onShare }) {
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 56, maxWidth: 980, margin: '0 auto', alignItems: 'flex-start' }}>
-        <div style={{ flex: '0 0 280px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+      <div style={{
+        display: 'flex', gap: 'clamp(24px, 6vw, 56px)', maxWidth: 980, margin: '0 auto',
+        alignItems: 'flex-start', flexWrap: 'wrap', justifyContent: 'center',
+      }}>
+        {/* Syllable tabs: vertical on desktop, horizontal scroll on mobile */}
+        <div style={{
+          flex: '0 0 auto', display: 'flex', flexDirection: 'column',
+          alignItems: 'center', gap: 12, width: '100%', maxWidth: 280,
+        }}>
           <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: '0.24em',
                         textTransform: 'uppercase', color: theme.sub }}>
-            THE SOUNDS
+            The sounds
           </div>
           <div style={{
-            display: 'flex', flexDirection: 'column', gap: 10, padding: '20px 0',
+            display: 'flex',
+            flexDirection: typeof window !== 'undefined' && window.innerWidth < 720 ? 'row' : 'column',
+            flexWrap: 'wrap', justifyContent: 'center',
+            gap: typeof window !== 'undefined' && window.innerWidth < 720 ? 16 : 10,
+            padding: '20px 0',
             borderTop: `1px solid ${theme.line}`, borderBottom: `1px solid ${theme.line}`,
+            width: '100%',
           }}>
             {reading.syllables.map((s, i) => (
               <button key={i} onClick={() => setActiveIdx(i)} style={{
                 background: 'none', border: 0, cursor: 'pointer',
                 fontFamily: theme.serif,
-                fontSize: i === activeIdx ? 64 : 44,
+                fontSize: i === activeIdx ? 56 : 36,
                 color: i === activeIdx ? theme.fg : theme.sub,
                 opacity: i === activeIdx ? 1 : 0.45,
                 lineHeight: 1, padding: 0, transition: 'all 0.4s cubic-bezier(.2,.7,.3,1)',
+                textAlign: 'center',
               }}>
                 {s.kana}
                 <div style={{
@@ -747,19 +760,19 @@ function Reading({ theme, name, onShop, onShare }) {
           </div>
         </div>
 
-        <div style={{ flex: 1, paddingTop: 30 }} key={activeIdx} className="kt-fadeup">
+        <div style={{ flex: '1 1 320px', paddingTop: 30, minWidth: 0 }} key={activeIdx} className="kt-fadeup">
           <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: '0.28em',
-                        textTransform: 'uppercase', color: theme.sub, marginBottom: 14 }}>
-            SYLLABLE {String(activeIdx + 1).padStart(2, '0')} OF {String(reading.syllables.length).padStart(2, '0')}
+                        textTransform: 'uppercase', color: theme.sub, marginBottom: 14, textAlign: 'center' }}>
+            Syllable {String(activeIdx + 1).padStart(2, '0')} of {String(reading.syllables.length).padStart(2, '0')}
           </div>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 18, marginBottom: 8 }}>
-            <span style={{ fontFamily: theme.serif, fontSize: 96, color: theme.fg, lineHeight: 1 }}>{active.kana}</span>
-            <span style={{ fontFamily: theme.serif, fontStyle: 'italic', fontSize: 28, color: theme.sub }}>— {active.romaji}</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 18, marginBottom: 16, flexWrap: 'wrap' }}>
+            <span style={{ fontFamily: theme.serif, fontSize: 'clamp(72px, 18vw, 120px)', color: theme.fg, lineHeight: 1 }}>{active.kana}</span>
+            <span style={{ fontFamily: theme.serif, fontStyle: 'italic', fontSize: 'clamp(22px, 5vw, 28px)', color: theme.sub }}>— {active.romaji}</span>
           </div>
-          <div style={{ display: 'flex', gap: 14, marginBottom: 24, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 14, marginBottom: 24, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}>
             {active.colorPill && (
               <span aria-hidden="true" style={{
-                width: 24, height: 24, borderRadius: '50%',
+                width: 22, height: 22, borderRadius: '50%',
                 background: active.colorPill,
                 boxShadow: '0 2px 6px rgba(0,0,0,0.18)',
                 flexShrink: 0,
@@ -770,26 +783,26 @@ function Reading({ theme, name, onShop, onShare }) {
               textTransform: 'uppercase', color: theme.accent,
               padding: '4px 10px', border: `1px solid ${theme.accent}`,
             }}>{active.element}</span>
-            <span style={{ fontFamily: theme.serif, fontSize: 24, color: theme.fg, fontStyle: 'italic' }}>
+            <span style={{ fontFamily: theme.serif, fontSize: 'clamp(20px, 5vw, 24px)', color: theme.fg, fontStyle: 'italic' }}>
               {active.keyword}
             </span>
           </div>
-          <p style={{ fontFamily: theme.serif, fontSize: 22, lineHeight: 1.55, color: theme.fg,
-                      fontStyle: 'italic', maxWidth: 460, margin: '0 0 24px' }}>
+          <p style={{ fontFamily: theme.serif, fontSize: 'clamp(20px, 5vw, 22px)', lineHeight: 1.55, color: theme.fg,
+                      fontStyle: 'italic', maxWidth: 540, margin: '0 auto 24px', textAlign: 'center' }}>
             “{active.poem}”
           </p>
           {active.deepMeaning && (
             <p style={{
-              fontFamily: theme.serif, fontSize: 16, lineHeight: 1.75,
+              fontFamily: theme.serif, fontSize: 'clamp(16px, 4vw, 18px)', lineHeight: 1.75,
               color: theme.fg, fontWeight: 300,
-              maxWidth: 540, margin: '0 0 36px',
-              opacity: 0.85,
+              maxWidth: 580, margin: '0 auto 36px',
+              opacity: 0.85, textAlign: 'left',
             }}>
               {active.deepMeaning}
             </p>
           )}
 
-          <div style={{ display: 'flex', gap: 14 }}>
+          <div style={{ display: 'flex', gap: 14, justifyContent: 'center' }}>
             <button onClick={() => setActiveIdx((activeIdx - 1 + reading.syllables.length) % reading.syllables.length)}
               style={{ background: 'none', border: `1px solid ${theme.line}`, color: theme.fg, padding: '10px 16px',
                        fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em',
@@ -803,12 +816,13 @@ function Reading({ theme, name, onShop, onShare }) {
       </div>
 
       <div style={{
-        marginTop: 80, padding: '40px 36px',
+        marginTop: 80, padding: 'clamp(28px, 5vw, 40px) clamp(20px, 5vw, 36px)',
         background: 'rgba(0,0,0,0.45)',
         borderTop: `1px solid ${theme.line}`,
         borderBottom: `1px solid ${theme.line}`,
         backdropFilter: 'blur(8px)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32,
+        flexWrap: 'wrap',
       }}>
         <div>
           <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: '0.24em',
