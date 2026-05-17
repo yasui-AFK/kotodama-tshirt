@@ -90,13 +90,13 @@ window.Enso = function Enso({ size = 200, color = '#1a1814', strokeWidth = 14, o
   );
 };
 
-window.Ripple = function Ripple({ size = 280, color = 'rgba(30,28,22,0.5)', delay = 0, style = {} }) {
+window.Ripple = function Ripple({ size = 280, color = 'rgba(30,28,22,0.5)', delay = 0, borderWidth = 1, style = {} }) {
   return (
     <div style={{ position: 'relative', width: size, height: size, ...style }}>
       {[0, 1, 2].map(i => (
         <div key={i} style={{
           position: 'absolute', inset: 0, borderRadius: '50%',
-          border: `1px solid ${color}`,
+          border: `${borderWidth}px solid ${color}`,
           animation: `kt-ripple 3.6s ${delay + i * 0.6}s cubic-bezier(.2,.7,.3,1) infinite`,
           opacity: 0,
         }}/>

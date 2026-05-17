@@ -666,8 +666,8 @@ function NameInput({ theme, name, setName, onSubmit }) {
           }}>LISTENING…</div>
 
           <div style={{ position: 'relative', width: 0, height: 0, margin: '0 auto' }}>
-            <div style={{ position: 'absolute', left: -200, top: -100 }}>
-              <window.Ripple size={400} color={theme.line.replace(/[0-9.]+\)/, '0.4)')}/>
+            <div style={{ position: 'absolute', left: -300, top: -150 }}>
+              <window.Ripple size={600} color="rgba(240,224,200,0.95)" borderWidth={2}/>
             </div>
           </div>
 
@@ -695,11 +695,13 @@ function Reading({ theme, name, onShop, onShare, onBack }) {
 
   return (
     <div style={{ padding: 'clamp(40px, 6vw, 60px) clamp(20px, 5vw, 60px) 80px', position: 'relative', overflow: 'hidden', background: theme.bg }}>
-      {/* 言霊 brushed kanji backdrop — visible behind reading */}
+      {/* 言霊 brushed kanji backdrop — confined to the top header region */}
       <div aria-hidden style={{
-        position: 'absolute', inset: 0, zIndex: 0,
+        position: 'absolute', top: 0, left: 0, right: 0, height: '100vh', zIndex: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         pointerEvents: 'none', opacity: 0.35,
+        maskImage: 'linear-gradient(to bottom, black 55%, transparent 100%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, black 55%, transparent 100%)',
       }}>
         <svg viewBox="0 0 440 220" style={{ width: 'min(900px, 75vw)', display: 'block' }}>
           <text x="110" y="180" textAnchor="middle" style={{
