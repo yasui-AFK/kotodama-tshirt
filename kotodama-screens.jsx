@@ -35,19 +35,19 @@ window.KT_THEMES = {
     tone: 'midnight',
   },
   sakura: {
-    name: 'Sumi Noir',
-    bg: '#000000',
-    fg: '#f0e0c8',
-    sub: 'rgba(240,224,200,0.6)',
-    line: 'rgba(240,224,200,0.15)',
-    paper: '#0a0806',
-    accent: '#b7282e',
-    accent2: '#d8a8b0',
-    cardBg: 'rgba(240,224,200,0.04)',
+    name: 'Warm Peach Light',
+    bg: '#fff5e8',
+    fg: '#3a2e26',
+    sub: 'rgba(58,46,38,0.55)',
+    line: 'rgba(58,46,38,0.15)',
+    paper: '#f9e8d6',
+    accent: '#c9533a',
+    accent2: '#c98268',
+    cardBg: 'rgba(58,46,38,0.04)',
     serif: '"Shippori Mincho", "Noto Serif JP", serif',
     sans: '"Inter", system-ui, sans-serif',
     mono: '"JetBrains Mono", monospace',
-    tone: 'midnight',
+    tone: 'warm',
   },
 };
 
@@ -488,7 +488,7 @@ function Landing({ theme, onStart }) {
               style={{
                 width: '100%', height: '100%',
                 objectFit: 'cover', display: 'block',
-                filter: 'sepia(0.7) brightness(0.85) contrast(0.95)',
+                filter: 'brightness(1.05) contrast(1.02)',
               }}/>
           </div>
 
@@ -517,14 +517,20 @@ function Landing({ theme, onStart }) {
       </section>
 
       {/* ============ 5 SECTIONS ============ */}
-      {SECTIONS.map((s, i) => (
+      {SECTIONS.map((s, i) => {
+        const LIGHT = '#f9e8d6';
+        return (
         <section key={i} style={{
           position: 'relative', minHeight: '100vh',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          backgroundImage: `url('${s.img}')`,
-          backgroundSize: 'cover', backgroundPosition: 'center',
           overflow: 'hidden',
         }}>
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: `url('${s.img}')`,
+            backgroundSize: 'cover', backgroundPosition: 'center',
+            filter: 'saturate(1.4) brightness(1.05)',
+          }}/>
           <div style={{
             position: 'absolute', inset: 0,
             background: 'linear-gradient(180deg, rgba(10,8,6,0.4) 0%, rgba(10,8,6,0.25) 40%, rgba(10,8,6,0.75) 100%)',
@@ -535,7 +541,7 @@ function Landing({ theme, onStart }) {
           }}>
             <div style={{
               fontFamily: theme.mono, fontSize: 14,
-              letterSpacing: '0.4em', color: theme.fg,
+              letterSpacing: '0.4em', color: LIGHT,
               textTransform: 'uppercase', opacity: 0.85,
               marginBottom: 24,
             }}>{s.num}</div>
@@ -544,34 +550,35 @@ function Landing({ theme, onStart }) {
               fontSize: 'clamp(80px, 14vw, 180px)',
               fontWeight: 300, letterSpacing: '0.12em',
               lineHeight: 1, margin: '0 0 16px',
-              color: theme.fg,
+              color: LIGHT,
               textShadow: '0 0 32px rgba(0,0,0,0.6)',
             }}>{s.kanji}</h2>
             <div style={{
               fontFamily: theme.serif, fontStyle: 'italic',
               fontSize: 'clamp(24px, 4vw, 28px)',
-              color: theme.fg, opacity: 0.92,
+              color: LIGHT, opacity: 0.92,
               marginBottom: 48, letterSpacing: '0.04em',
             }}>{s.sub}</div>
             <p style={{
               fontFamily: theme.serif,
               fontSize: 'clamp(22px, 4.5vw, 24px)',
-              lineHeight: 1.7, color: theme.fg, opacity: 0.92,
+              lineHeight: 1.7, color: LIGHT, opacity: 0.92,
               margin: '0 auto 56px', maxWidth: 560,
               fontStyle: 'italic',
               textShadow: '0 0 24px rgba(0,0,0,0.6)',
             }}>{s.desc}</p>
             <button onClick={onStart} style={{
               padding: 'clamp(14px, 2.5vw, 22px) clamp(28px, 6vw, 56px)',
-              background: 'transparent', color: theme.fg,
-              border: `1px solid ${theme.fg}`,
+              background: 'transparent', color: LIGHT,
+              border: `1px solid ${LIGHT}`,
               fontFamily: theme.mono, fontSize: 'clamp(12px, 1.5vw, 15px)',
               letterSpacing: '0.22em', textTransform: 'uppercase',
               cursor: 'pointer', transition: 'all 0.3s',
             }}>{s.cta} →</button>
           </div>
         </section>
-      ))}
+        );
+      })}
     </div>
   );
 }
