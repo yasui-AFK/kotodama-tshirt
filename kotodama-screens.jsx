@@ -901,21 +901,24 @@ function Reading({ theme, name, onShop, onShare, onBack }) {
             Make {name}'s reading yours — a scroll, a tee, or a quiet keepsake.
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 12, flexShrink: 0, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', flex: '1 1 auto', maxWidth: '100%' }}>
           <button onClick={onShare} style={{
             background: 'none', color: theme.fg, border: `1px solid ${theme.fg}`,
             padding: '14px 22px', fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em',
             textTransform: 'uppercase', cursor: 'pointer',
+            flex: '1 1 200px', minWidth: 0,
           }}>Share my reading</button>
           <button onClick={onBack} style={{
             background: 'none', color: theme.fg, border: `1px solid ${theme.fg}`,
             padding: '14px 22px', fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em',
             textTransform: 'uppercase', cursor: 'pointer',
+            flex: '1 1 200px', minWidth: 0,
           }}>Brush a name for someone →</button>
           <button onClick={onShop} style={{
             background: theme.fg, color: theme.bg, border: 0,
             padding: '14px 26px', fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em',
             textTransform: 'uppercase', cursor: 'pointer',
+            flex: '1 1 200px', minWidth: 0,
           }}>Shop the collection →</button>
         </div>
       </div>
