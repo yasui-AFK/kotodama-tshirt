@@ -95,10 +95,9 @@ function Logo({ theme, size = 18 }) {
       fontFamily: theme.serif, fontSize: size, letterSpacing: '0.18em',
       textTransform: 'uppercase', color: theme.fg,
     }}>
-      <svg width="20" height="20" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="9" fill="none" stroke={theme.fg} strokeWidth="1.5"
-                strokeDasharray="0 5 50" strokeLinecap="round" transform="rotate(-90 12 12)"/>
-      </svg>
+      <img src="assets/kotodama-symbol.png" alt="" style={{
+        height: 28, width: 'auto', display: 'block',
+      }}/>
       <span>Kotodama</span>
     </div>
   );
@@ -242,23 +241,37 @@ function KotodamaBrushBackdrop({ theme }) {
 }
 
 function HeroVideo() {
-  // Static background — video temporarily replaced with hero.jpg image.
-  // Kept the function name + animation/zIndex contract so callers/CSS work unchanged.
+  const videoRef = useRefK(null);
+  useEffectK(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    v.playsInline = true;
+    const tryPlay = () => v.play().catch(() => {});
+    tryPlay();
+    const onTouch = () => { tryPlay(); document.removeEventListener('touchstart', onTouch); };
+    document.addEventListener('touchstart', onTouch, { once: true });
+    return () => document.removeEventListener('touchstart', onTouch);
+  }, []);
   return (
     <div style={{
       position: 'absolute', inset: 0, zIndex: 0, opacity: 0,
-      animation: 'kt-video-in 1.8s cubic-bezier(0.25, 0.1, 0.25, 1) 6s forwards',
+      animation: 'kt-video-in 1.8s cubic-bezier(0.25, 0.1, 0.25, 1) 8s forwards',
       overflow: 'hidden',
       pointerEvents: 'none',
     }}>
-      <img
-        src="assets/photos/hero.jpg"
-        alt=""
+      <video
+        ref={videoRef}
+        src="assets/hero.mp4"
+        autoPlay muted loop playsInline preload="auto"
+        poster="assets/photos/hero.jpg"
+        controls={false}
+        disablePictureInPicture
         style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
       />
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'linear-gradient(180deg, rgba(255,245,232,0.4) 0%, rgba(255,245,232,0.15) 50%, rgba(255,245,232,0.6) 100%)',
+        background: 'linear-gradient(180deg, rgba(10,8,6,0.45) 0%, rgba(10,8,6,0.25) 50%, rgba(10,8,6,0.7) 100%)',
         pointerEvents: 'none',
       }}/>
     </div>
@@ -325,8 +338,8 @@ function HeroParticleCanvas() {
     position: 'absolute', inset: 0, zIndex: 2,
     width: '100%', height: '100%',
     pointerEvents: 'none', filter: 'blur(40px)',
-    mixBlendMode: 'screen',
-    animation: 'kt-particles-fade 1.8s cubic-bezier(0.4, 0, 0.6, 1) 6s forwards',
+    mixBlendMode: 'screen', opacity: 0,
+    animation: 'kt-particles-in 1.8s cubic-bezier(0.4, 0, 0.6, 1) 8s forwards',
   }}/>;
 }
 
@@ -342,30 +355,50 @@ function Landing({ theme, onStart }) {
   return (
     <div style={{ position: 'relative', background: theme.bg }}>
       {/* ============ HERO ============ */}
+      {/* Hero opening sequence:
+            0.3-1.8s  kotodama-logo.png scales in + fades in
+            2.0-3.0s  logo fades out
+            0.5-8.3s  「言霊」brush draws (existing)
+            6-7.8s    video fades in + text color-flips brown → cream + particles fade in
+            10-12s    「言霊」fades out
+            11.5-13s  Bible copy fades in */}
       <section style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden', background: theme.bg }}>
+        {/* logo intro */}
+        <div aria-hidden style={{
+          position: 'absolute', inset: 0, zIndex: 4,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          pointerEvents: 'none', opacity: 0,
+          animation: 'kt-logo-in 1.5s cubic-bezier(0.25, 0.1, 0.25, 1) 0.3s forwards, kt-logo-out 1s ease-out 2s forwards',
+        }}>
+          <img src="assets/kotodama-logo.png" alt="" style={{
+            width: 'min(280px, 60vw)', height: 'auto', display: 'block',
+            mixBlendMode: 'multiply',
+          }}/>
+        </div>
+
         {/* video background */}
         <HeroVideo />
 
 
-        {/* 言霊 brushed kanji backdrop (writes 0-8.3s, fades 10-12s) */}
+        {/* 言霊 brushed kanji backdrop (starts after logo fade-out at 3s) */}
         <div aria-hidden style={{
           position: 'absolute', inset: 0, zIndex: 1,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           pointerEvents: 'none', opacity: 0.65,
-          animation: 'kt-kanji-out 2s cubic-bezier(0.25, 0.1, 0.25, 1) 10s forwards',
+          animation: 'kt-kanji-out 2s cubic-bezier(0.25, 0.1, 0.25, 1) 12s forwards',
         }}>
           <svg viewBox="0 0 440 220" style={{ width: 'min(720px, 80vw)', display: 'block', overflow: 'visible' }}>
             <text x="110" y="180" textAnchor="middle" style={{
               fontFamily: theme.serif, fontWeight: 700, fontSize: 210,
-              fill: theme.fg, fillOpacity: 0, stroke: theme.fg, strokeWidth: 1.4,
+              fill: '#3a2e26', fillOpacity: 0, stroke: '#3a2e26', strokeWidth: 1.4,
               strokeDasharray: 1300, strokeDashoffset: 1300,
-              animation: 'kt-brush-draw 4.5s ease-out 0.5s forwards, kt-brush-fill 1.5s ease-out 7s forwards',
+              animation: 'kt-brush-draw 4.5s ease-out 3s forwards, kt-brush-fill 1.5s ease-out 9s forwards, kt-fill-flip-cream 1.8s ease-out 8s forwards',
             }}>言</text>
             <text x="330" y="180" textAnchor="middle" style={{
               fontFamily: theme.serif, fontWeight: 700, fontSize: 210,
-              fill: theme.fg, fillOpacity: 0, stroke: theme.fg, strokeWidth: 1.4,
+              fill: '#3a2e26', fillOpacity: 0, stroke: '#3a2e26', strokeWidth: 1.4,
               strokeDasharray: 1600, strokeDashoffset: 1600,
-              animation: 'kt-brush-draw 5.5s ease-out 2.8s forwards, kt-brush-fill 1.5s ease-out 7s forwards',
+              animation: 'kt-brush-draw 5.5s ease-out 5.3s forwards, kt-brush-fill 1.5s ease-out 9s forwards, kt-fill-flip-cream 1.8s ease-out 8s forwards',
             }}>霊</text>
           </svg>
         </div>
@@ -387,59 +420,62 @@ function Landing({ theme, onStart }) {
             fontFamily: theme.serif,
             fontSize: 'clamp(48px, 12vw, 140px)',
             fontWeight: 600, letterSpacing: '0',
-            margin: '0 0 56px', color: theme.fg,
+            margin: '0 0 56px',
             display: 'flex', justifyContent: 'center', gap: '0',
             lineHeight: 1, textShadow: '0 0 32px rgba(0,0,0,0.5)',
           }}>
             {[
-              { ch: 'K', anim: 'kt-fade-up',    delay: 1.0 },
-              { ch: 'O', anim: 'kt-fade-up',    delay: 1.2 },
-              { ch: 'T', anim: 'kt-fade-down',  delay: 1.4 },
-              { ch: 'O', anim: 'kt-fade-down',  delay: 1.6, accent: true },
-              { ch: 'D', anim: 'kt-fade-left',  delay: 1.8, accent: true },
-              { ch: 'A', anim: 'kt-fade-left',  delay: 2.0 },
-              { ch: 'M', anim: 'kt-fade-right', delay: 2.2 },
-              { ch: 'A', anim: 'kt-fade-right', delay: 2.4 },
+              { ch: 'K', anim: 'kt-fade-up',    delay: 3.0 },
+              { ch: 'O', anim: 'kt-fade-up',    delay: 3.2 },
+              { ch: 'T', anim: 'kt-fade-down',  delay: 3.4 },
+              { ch: 'O', anim: 'kt-fade-down',  delay: 3.6, accent: true },
+              { ch: 'D', anim: 'kt-fade-left',  delay: 3.8, accent: true },
+              { ch: 'A', anim: 'kt-fade-left',  delay: 4.0 },
+              { ch: 'M', anim: 'kt-fade-right', delay: 4.2 },
+              { ch: 'A', anim: 'kt-fade-right', delay: 4.4 },
             ].map((l, i) => (
               <span key={i} style={{
                 display: 'inline-block', opacity: 0,
-                animation: `${l.anim} 1.5s cubic-bezier(0.25, 0.1, 0.25, 1) ${l.delay}s forwards`,
-                color: l.accent ? theme.accent : theme.fg,
+                animation: `${l.anim} 1.5s cubic-bezier(0.25, 0.1, 0.25, 1) ${l.delay}s forwards${l.accent ? '' : ', kt-color-flip-cream 1.8s ease-out 8s forwards'}`,
+                color: l.accent ? theme.accent : '#3a2e26',
               }}>{l.ch}</span>
             ))}
           </h1>
           <div style={{
             fontFamily: theme.serif,
             fontSize: 'clamp(17px, 4vw, 26px)',
-            lineHeight: 1.55, color: theme.fg,
+            lineHeight: 1.55, color: '#f5ecdf',
             fontStyle: 'italic', maxWidth: 620,
             textShadow: '0 0 24px rgba(0,0,0,0.5)', opacity: 0.92,
           }}>
-            <p style={{ margin: 0, opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 11.5s forwards' }}>
+            {/* Bible copy appears at 11.5s+, after the video has already faded in.
+                It starts cream from the beginning (no flip needed). */}
+            <p style={{ margin: 0, opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 13.5s forwards' }}>
               In the beginning, the <span style={{ color: theme.accent }}>Word</span>.
             </p>
-            <p style={{ margin: 0, marginBottom: '1.6em', opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 11.9s forwards' }}>
+            <p style={{ margin: 0, marginBottom: '1.6em', opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 13.9s forwards' }}>
               Through the Word, the <span style={{ color: theme.accent }}>world</span>.
             </p>
-            <p style={{ margin: 0, opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 12.5s forwards' }}>
+            <p style={{ margin: 0, opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 14.5s forwards' }}>
               You were given a <span style={{ color: theme.accent }}>name</span>.
             </p>
-            <p style={{ margin: 0, opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 12.9s forwards' }}>
+            <p style={{ margin: 0, opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 14.9s forwards' }}>
               Through your name, your <span style={{ color: theme.accent }}>life</span>.
             </p>
           </div>
 
-          {/* Hero CTA — always visible, floats gently */}
+          {/* Hero CTA — fades in after logo (3s), floats gently, color-flips with video (8s) */}
           <button onClick={onStart} style={{
             marginTop: 'clamp(32px, 6vw, 56px)',
             padding: 'clamp(14px, 2.5vw, 22px) clamp(28px, 6vw, 56px)',
-            background: 'transparent', color: theme.fg,
-            border: `1px solid ${theme.fg}`,
+            background: 'transparent', color: '#3a2e26',
+            border: '1px solid #3a2e26',
             fontFamily: theme.mono, fontSize: 'clamp(12px, 1.5vw, 15px)',
             letterSpacing: '0.22em', textTransform: 'uppercase',
             cursor: 'pointer',
             textShadow: '0 0 16px rgba(0,0,0,0.6)',
-            animation: 'kt-float 3.5s ease-in-out infinite',
+            opacity: 0,
+            animation: 'kt-fade-up-soft 1.5s ease-out 4s forwards, kt-float 3.5s ease-in-out 5.5s infinite, kt-color-flip-cream 1.8s ease-out 8s forwards, kt-border-flip-cream 1.8s ease-out 8s forwards',
           }}>Begin a reading →</button>
         </div>
       </section>
@@ -687,11 +723,11 @@ function Reading({ theme, name, onShop, onShare, onBack }) {
 
   return (
     <div style={{ padding: 'clamp(40px, 6vw, 60px) clamp(20px, 5vw, 60px) 80px', position: 'relative', overflow: 'hidden', background: theme.bg }}>
-      {/* 言霊 brushed kanji backdrop — confined to the top header region */}
+      {/* 言霊 brushed kanji backdrop — subtle hint on cream palette (was Sumi-Noir era 0.35) */}
       <div aria-hidden style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: '100vh', zIndex: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        pointerEvents: 'none', opacity: 0.35,
+        pointerEvents: 'none', opacity: 0.1,
         maskImage: 'linear-gradient(to bottom, black 55%, transparent 100%)',
         WebkitMaskImage: 'linear-gradient(to bottom, black 55%, transparent 100%)',
       }}>
@@ -733,10 +769,9 @@ function Reading({ theme, name, onShop, onShare, onBack }) {
 
       <div style={{
         textAlign: 'center', maxWidth: 640, margin: '0 auto 64px', padding: '36px 32px',
-        background: 'rgba(0,0,0,0.45)',
+        background: 'transparent',
         borderTop: `1px solid ${theme.line}`,
         borderBottom: `1px solid ${theme.line}`,
-        backdropFilter: 'blur(8px)',
       }}>
         <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: '0.28em',
                       textTransform: 'uppercase', color: theme.sub, marginBottom: 14 }}>
@@ -851,10 +886,9 @@ function Reading({ theme, name, onShop, onShare, onBack }) {
 
       <div style={{
         marginTop: 80, padding: 'clamp(28px, 5vw, 40px) clamp(20px, 5vw, 36px)',
-        background: 'rgba(0,0,0,0.45)',
+        background: 'transparent',
         borderTop: `1px solid ${theme.line}`,
         borderBottom: `1px solid ${theme.line}`,
-        backdropFilter: 'blur(8px)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32,
         flexWrap: 'wrap',
       }}>

@@ -258,6 +258,12 @@ if (!document.getElementById('kt-anims')) {
     @keyframes kt-particles-fade {
       to { opacity: 0; visibility: hidden; }
     }
+    /* Particles fade IN with the hero video (cream-bg opening hides screen-blend particles
+       anyway, then dark-bg video gives them somewhere to glow). */
+    @keyframes kt-particles-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
     @keyframes kt-float {
       0%, 100% { transform: translateY(0); }
       50%      { transform: translateY(-8px); }
@@ -265,6 +271,29 @@ if (!document.getElementById('kt-anims')) {
     @keyframes kt-pulse {
       0%, 100% { opacity: 0.4; }
       50% { opacity: 1; }
+    }
+    /* Logo intro: scales in from 0.85, holds, fades out before the kanji brush ramps up. */
+    @keyframes kt-logo-in {
+      from { opacity: 0; transform: scale(0.85); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes kt-logo-out {
+      from { opacity: 1; transform: scale(1); }
+      to   { opacity: 0; transform: scale(1.05); }
+    }
+    /* Hero color-flip: at the moment the hero video fades in (around 6s),
+       text + brushed-kanji shift from brown (cream-bg phase) to cream (video phase). */
+    @keyframes kt-color-flip-cream {
+      from { color: #3a2e26; }
+      to   { color: #f5ecdf; }
+    }
+    @keyframes kt-border-flip-cream {
+      from { border-color: #3a2e26; }
+      to   { border-color: #f5ecdf; }
+    }
+    @keyframes kt-fill-flip-cream {
+      from { fill: #3a2e26; stroke: #3a2e26; }
+      to   { fill: #f5ecdf; stroke: #f5ecdf; }
     }
     .kt-fadeup { animation: kt-fadeup 0.8s cubic-bezier(.2,.7,.3,1) both; }
     .kt-inkbleed { animation: kt-inkbleed 1.2s cubic-bezier(.2,.7,.3,1) both; }
