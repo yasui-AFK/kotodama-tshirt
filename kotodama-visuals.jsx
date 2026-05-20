@@ -297,9 +297,9 @@ if (!document.getElementById('kt-anims')) {
     }
     .kt-fadeup { animation: kt-fadeup 0.8s cubic-bezier(.2,.7,.3,1) both; }
     .kt-inkbleed { animation: kt-inkbleed 1.2s cubic-bezier(.2,.7,.3,1) both; }
-    /* iOS Safari: hide overlay play button when autoplay is blocked */
+    /* iOS Safari: hide the in-stream overlay play button but keep the
+       start-playback-button reachable so users can tap when autoplay is blocked. */
     video::-webkit-media-controls,
-    video::-webkit-media-controls-start-playback-button,
     video::-webkit-media-controls-overlay-play-button,
     video::-webkit-media-controls-panel {
       display: none !important;
