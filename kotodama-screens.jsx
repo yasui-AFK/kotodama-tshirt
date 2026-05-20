@@ -242,19 +242,8 @@ function KotodamaBrushBackdrop({ theme }) {
 }
 
 function HeroVideo() {
-  const videoRef = useRefK(null);
-  useEffectK(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.muted = true;
-    v.playsInline = true;
-    const tryPlay = () => v.play().catch(() => {});
-    tryPlay();
-    // retry on user interaction (iOS low-power mode workaround)
-    const onTouch = () => { tryPlay(); document.removeEventListener('touchstart', onTouch); };
-    document.addEventListener('touchstart', onTouch, { once: true });
-    return () => document.removeEventListener('touchstart', onTouch);
-  }, []);
+  // Static background — video temporarily replaced with hero.jpg image.
+  // Kept the function name + animation/zIndex contract so callers/CSS work unchanged.
   return (
     <div style={{
       position: 'absolute', inset: 0, zIndex: 0, opacity: 0,
@@ -262,18 +251,14 @@ function HeroVideo() {
       overflow: 'hidden',
       pointerEvents: 'none',
     }}>
-      <video
-        ref={videoRef}
-        src="assets/hero.mp4"
-        autoPlay muted loop playsInline preload="auto"
-        poster="assets/photos/birth.jpg"
-        controls={false}
-        disablePictureInPicture
+      <img
+        src="assets/photos/hero.jpg"
+        alt=""
         style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
       />
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'linear-gradient(180deg, rgba(10,8,6,0.45) 0%, rgba(10,8,6,0.25) 50%, rgba(10,8,6,0.7) 100%)',
+        background: 'linear-gradient(180deg, rgba(255,245,232,0.4) 0%, rgba(255,245,232,0.15) 50%, rgba(255,245,232,0.6) 100%)',
         pointerEvents: 'none',
       }}/>
     </div>

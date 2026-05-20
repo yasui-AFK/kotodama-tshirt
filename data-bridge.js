@@ -247,11 +247,23 @@
 
     // syllables を merged window.KOTODAMA から組み立て直す
     // 濁音・拗音・促音（プロトの50音に無い文字）は ENGLISH_MEANINGS をフォールバックに使う
-    const syllables = kotodamaResults
-      .filter(k => !k.isSpecial)
+    // 「ー」(long-echo, isSpecial) は単独 syllable にせず、直前 syllable の表示 kana に追加
+    const filteredResults = [];
+    for (const k of kotodamaResults) {
+      if (k.isSpecial && k.kana === 'ー') {
+        if (filteredResults.length > 0) {
+          filteredResults[filteredResults.length - 1]._appendLong = true;
+        }
+        continue;
+      }
+      if (k.isSpecial) continue;
+      filteredResults.push(k);
+    }
+    const syllables = filteredResults
       .map(k => {
+        const displayKana = k.kana + (k._appendLong ? 'ー' : '');
         const merged = window.KOTODAMA[k.romaji];
-        if (merged) return { key: k.romaji, ...merged };
+        if (merged) return { key: k.romaji, ...merged, kana: displayKana };
 
         // Fallback: legacy ENGLISH_MEANINGS は "Keyword — Description" 形式
         const en = (window.ENGLISH_MEANINGS && window.ENGLISH_MEANINGS[k.kana]) || '';
@@ -262,7 +274,7 @@
 
         return {
           key: k.romaji,
-          kana: k.kana,
+          kana: displayKana,
           romaji: k.romaji,
           element: 'Sky',
           keyword,

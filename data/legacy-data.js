@@ -127,6 +127,7 @@ window.kotodamaData = {
 };
 
 window.ROMAJI_MAP = [
+  ['-','ー'],
   ['rya','りゃ'],['ryu','りゅ'],['ryo','りょ'],
   ['kya','きゃ'],['kyu','きゅ'],['kyo','きょ'],
   ['sha','しゃ'],['shu','しゅ'],['sho','しょ'],
