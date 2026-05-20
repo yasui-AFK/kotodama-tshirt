@@ -360,12 +360,14 @@ function Row({ theme, label, value, bold }) {
 function ShareModal({ theme, name, reading, onClose }) {
   return (
     <div style={{
-      position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100,
-      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40,
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100,
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(16px, 4vw, 40px)',
+      overflowY: 'auto',
       animation: 'kt-fadeup 0.3s both',
     }} onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{
-        background: theme.bg, padding: 36, maxWidth: 460, width: '100%',
+        background: theme.bg, padding: 'clamp(20px, 5vw, 36px)', maxWidth: 460, width: '100%',
+        maxHeight: '100%', overflowY: 'auto',
         border: `1px solid ${theme.line}`, position: 'relative',
       }}>
         <button onClick={onClose} style={{
@@ -402,12 +404,12 @@ function ShareModal({ theme, name, reading, onClose }) {
                         textTransform: 'uppercase', color: theme.sub }}>kotodama.studio</div>
         </div>
 
-        <div style={{ display: 'flex', gap: 10, marginTop: 22 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 22 }}>
           {['Instagram', 'TikTok', 'Download'].map(b => (
             <button key={b} style={{
-              flex: 1, padding: '12px', background: 'none', cursor: 'pointer',
+              padding: '14px', background: 'none', cursor: 'pointer',
               border: `1px solid ${theme.line}`, color: theme.fg,
-              fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase',
+              fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase',
             }}>{b}</button>
           ))}
         </div>
