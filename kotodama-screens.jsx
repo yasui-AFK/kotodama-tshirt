@@ -902,16 +902,16 @@ function Reading({ theme, name, onShop, onShare, onBack }) {
           </div>
         </div>
         <div style={{ display: 'flex', gap: 12, flexShrink: 0, flexWrap: 'wrap' }}>
-          <button onClick={() => window.KT_PDF && window.KT_PDF.generateFreeSamplePdf(name)} style={{
-            background: 'none', color: theme.fg, border: `1px solid ${theme.fg}`,
-            padding: '14px 22px', fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em',
-            textTransform: 'uppercase', cursor: 'pointer',
-          }}>Free Sample · 3 sounds</button>
           <button onClick={onShare} style={{
             background: 'none', color: theme.fg, border: `1px solid ${theme.fg}`,
             padding: '14px 22px', fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em',
             textTransform: 'uppercase', cursor: 'pointer',
           }}>Share my reading</button>
+          <button onClick={onBack} style={{
+            background: 'none', color: theme.fg, border: `1px solid ${theme.fg}`,
+            padding: '14px 22px', fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em',
+            textTransform: 'uppercase', cursor: 'pointer',
+          }}>Brush a name for someone →</button>
           <button onClick={onShop} style={{
             background: theme.fg, color: theme.bg, border: 0,
             padding: '14px 26px', fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em',

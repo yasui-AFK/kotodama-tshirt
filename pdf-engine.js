@@ -35,6 +35,17 @@
     });
   }
 
+  let logoSymbolImg = null;
+  function loadLogoSymbol() {
+    return new Promise((resolve) => {
+      if (logoSymbolImg) { resolve(logoSymbolImg); return; }
+      const img = new Image();
+      img.onload = () => { logoSymbolImg = img; resolve(img); };
+      img.onerror = () => resolve(null);
+      img.src = 'assets/kotodama-symbol.png';
+    });
+  }
+
   async function preloadFonts() {
     const fonts = [
       '900 72px "Inter"',
@@ -97,7 +108,7 @@
 
   // === Bold Washi share card ===
   async function renderShareCard(name, hiragana, kotodamaResults, canvasId = 'shareCardCanvas', scale = 1) {
-    const [, bgImg] = await Promise.all([preloadFonts(), loadBgImage()]);
+    const [, bgImg, symbolImg] = await Promise.all([preloadFonts(), loadBgImage(), loadLogoSymbol()]);
 
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
@@ -130,20 +141,29 @@
       ctx.fillRect(0, 0, W, H);
     }
 
+    // Logo symbol at top center
+    if (symbolImg) {
+      const symbolHeight = 80;
+      const symbolWidth = symbolHeight * (symbolImg.naturalWidth / symbolImg.naturalHeight);
+      const symbolX = (W - symbolWidth) / 2;
+      const symbolY = 18;
+      ctx.drawImage(symbolImg, symbolX, symbolY, symbolWidth, symbolHeight);
+    }
+
     ctx.font = '600 24px "Inter"';
     ctx.fillStyle = '#c53d43';
     ctx.textAlign = 'center';
-    ctx.fillText('K O T O D A M A', W / 2, 65);
+    ctx.fillText('K O T O D A M A', W / 2, 130);
 
     ctx.font = '300 20px "Inter"';
     ctx.fillStyle = '#7a6e58';
-    ctx.fillText('The spirit of your name', W / 2, 100);
+    ctx.fillText('The spirit of your name', W / 2, 162);
 
     ctx.strokeStyle = 'rgba(197,61,67,0.15)';
     ctx.lineWidth = 0.5;
     ctx.beginPath();
-    ctx.moveTo(W / 2 - 160, 118);
-    ctx.lineTo(W / 2 + 160, 118);
+    ctx.moveTo(W / 2 - 160, 180);
+    ctx.lineTo(W / 2 + 160, 180);
     ctx.stroke();
 
     const nameText = name.toUpperCase();
@@ -241,19 +261,26 @@
 
   // === PDF helpers ===
   function drawPdfHeader(pdf, subtitle) {
+    // Logo symbol at top center (if preloaded)
+    if (logoSymbolImg) {
+      const logoH = 10;
+      const logoW = logoH * (logoSymbolImg.naturalWidth / logoSymbolImg.naturalHeight);
+      try { pdf.addImage(logoSymbolImg, 'PNG', 105 - logoW / 2, 5, logoW, logoH); }
+      catch (_) { /* fallback: header text only */ }
+    }
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(11);
     pdf.setTextColor(197, 61, 67);
-    pdf.text('K  O  T  O  D  A  M  A', 105, 18, { align: 'center' });
+    pdf.text('K  O  T  O  D  A  M  A', 105, 22, { align: 'center' });
     if (subtitle) {
       pdf.setFont('helvetica', 'italic');
       pdf.setFontSize(9);
       pdf.setTextColor(122, 110, 88);
-      pdf.text(subtitle, 105, 24, { align: 'center' });
+      pdf.text(subtitle, 105, 28, { align: 'center' });
     }
     pdf.setDrawColor(197, 61, 67);
     pdf.setLineWidth(0.3);
-    pdf.line(85, 30, 125, 30);
+    pdf.line(85, 34, 125, 34);
   }
 
   function drawPdfFooter(pdf, customNote) {
@@ -348,19 +375,25 @@
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
+    if (logoSymbolImg) {
+      const logoH = 10;
+      const logoW = logoH * (logoSymbolImg.naturalWidth / logoSymbolImg.naturalHeight);
+      try { pdf.addImage(logoSymbolImg, 'PNG', 105 - logoW / 2, 5, logoW, logoH); }
+      catch (_) { /* fallback */ }
+    }
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(11);
     pdf.setTextColor(197, 61, 67);
-    pdf.text('K  O  T  O  D  A  M  A', 105, 18, { align: 'center' });
+    pdf.text('K  O  T  O  D  A  M  A', 105, 22, { align: 'center' });
 
     pdf.setFont('helvetica', 'italic');
     pdf.setFontSize(9);
     pdf.setTextColor(122, 110, 88);
-    pdf.text('Free Sample Reading', 105, 24, { align: 'center' });
+    pdf.text('Free Sample Reading', 105, 28, { align: 'center' });
 
     pdf.setDrawColor(197, 61, 67);
     pdf.setLineWidth(0.3);
-    pdf.line(85, 30, 125, 30);
+    pdf.line(85, 34, 125, 34);
 
     pdf.setFont('helvetica', 'bold');
     const nameUpper = name.toUpperCase();
@@ -722,6 +755,10 @@
       window.trackEvent('couple_pdf_preview_download', { name1: reading1.name, name2: reading2.name });
     }
   }
+
+  // Fire-and-forget preload so the logo is ready for any header before the
+  // first PDF/share-card is generated (jsPDF.addImage / canvas.drawImage are sync).
+  loadLogoSymbol();
 
   // === Public surface ===
   window.KT_PDF = {
