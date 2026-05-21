@@ -457,9 +457,15 @@ function Landing({ theme, onStart }) {
               Through the Word, the <span style={{ color: theme.accent }}>world</span>.
             </p>
             <p style={{ margin: 0, opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 14.5s forwards' }}>
+              Japan has a word for this: <span style={{ color: theme.accent }}>kotodama</span>.
+            </p>
+            <p style={{ margin: 0, marginBottom: '1.6em', opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 14.9s forwards' }}>
+              Every sound, a quiet <span style={{ color: theme.accent }}>spirit</span>.
+            </p>
+            <p style={{ margin: 0, opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 15.5s forwards' }}>
               You were given a <span style={{ color: theme.accent }}>name</span>.
             </p>
-            <p style={{ margin: 0, opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 14.9s forwards' }}>
+            <p style={{ margin: 0, opacity: 0, animation: 'kt-fade-up-soft 1.6s cubic-bezier(0.25,0.1,0.25,1) 15.9s forwards' }}>
               Through your name, your <span style={{ color: theme.accent }}>life</span>.
             </p>
           </div>
