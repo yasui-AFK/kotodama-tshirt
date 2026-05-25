@@ -628,13 +628,21 @@ function NameInput({ theme, name, setName, onSubmit }) {
 
   return (
     <div style={{ padding: '80px 60px', textAlign: 'center', minHeight: 600, background: theme.bg, position: 'relative', overflow: 'hidden' }}>
-      {stage === 'input' && (
-        <div aria-hidden style={{
-          position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
-        }}>
-          <window.SumiInkBlob accentColor={theme.accent} fgColor={theme.fg}/>
-        </div>
-      )}
+      {/* 言霊 brushed kanji backdrop */}
+      <div aria-hidden style={{
+        position: 'absolute', inset: 0, zIndex: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        pointerEvents: 'none', opacity: 0.35,
+      }}>
+        <svg viewBox="0 0 440 220" style={{ width: 'min(900px, 75vw)', display: 'block' }}>
+          <text x="110" y="180" textAnchor="middle" style={{
+            fontFamily: theme.serif, fontWeight: 700, fontSize: 210, fill: theme.fg,
+          }}>言</text>
+          <text x="330" y="180" textAnchor="middle" style={{
+            fontFamily: theme.serif, fontWeight: 700, fontSize: 210, fill: theme.fg,
+          }}>霊</text>
+        </svg>
+      </div>
 
       <div style={{ position: 'relative', zIndex: 1 }}>
       <div style={{
@@ -722,13 +730,22 @@ function Reading({ theme, name, onShop, onShare, onBack }) {
 
   return (
     <div style={{ padding: 'clamp(40px, 6vw, 60px) clamp(20px, 5vw, 60px) 80px', position: 'relative', overflow: 'hidden', background: theme.bg }}>
+      {/* 言霊 brushed kanji backdrop — subtle hint on cream palette (was Sumi-Noir era 0.35) */}
       <div aria-hidden style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: '100vh', zIndex: 0,
-        pointerEvents: 'none',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        pointerEvents: 'none', opacity: 0.1,
         maskImage: 'linear-gradient(to bottom, black 55%, transparent 100%)',
         WebkitMaskImage: 'linear-gradient(to bottom, black 55%, transparent 100%)',
       }}>
-        <window.SumiInkBlob accentColor={theme.accent} fgColor={theme.fg} opacity={0.7}/>
+        <svg viewBox="0 0 440 220" style={{ width: 'min(900px, 75vw)', display: 'block' }}>
+          <text x="110" y="180" textAnchor="middle" style={{
+            fontFamily: theme.serif, fontWeight: 700, fontSize: 210, fill: theme.fg,
+          }}>言</text>
+          <text x="330" y="180" textAnchor="middle" style={{
+            fontFamily: theme.serif, fontWeight: 700, fontSize: 210, fill: theme.fg,
+          }}>霊</text>
+        </svg>
       </div>
 
       <div style={{ position: 'relative', zIndex: 1 }}>
