@@ -420,7 +420,17 @@ function ShareModal({ theme, name, reading, onClose }) {
 
 window.KotodamaApp = function KotodamaApp({ theme, initialScreen = 'landing', initialName = '', frameMode = 'desktop' }) {
   const [screen, setScreen] = useStateK2(initialScreen);
-  const [name, setName] = useStateK2(initialName);
+  const [name, setNameRaw] = useStateK2(() => {
+    try { return localStorage.getItem('kt-name') || initialName; }
+    catch (e) { return initialName; }
+  });
+  const setName = (n) => {
+    setNameRaw(n);
+    try {
+      if (n) localStorage.setItem('kt-name', n);
+      else localStorage.removeItem('kt-name');
+    } catch (e) {}
+  };
   const [cart, setCart] = useStateK2([]);
   const [activeProduct, setActiveProduct] = useStateK2(null);
   const [shareOpen, setShareOpen] = useStateK2(false);
@@ -457,9 +467,8 @@ window.KotodamaApp = function KotodamaApp({ theme, initialScreen = 'landing', in
     <window.WashiBg tone={theme.tone} style={{ minHeight: '100%', position: 'relative' }}>
       <KNavBar theme={theme} screen={screen} hasReading={hasReading}
         onNav={(k) => {
-          if (k === 'reading') nav('reading');
+          if (k === 'reading') nav(hasReading ? 'reading' : 'input');
           else if (k === 'products') nav('products');
-          else if (k === 'about') nav('landing');
           else if (k === 'landing') nav('landing');
         }}/>
 

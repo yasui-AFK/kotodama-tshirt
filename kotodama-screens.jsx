@@ -108,7 +108,7 @@ function NavBar({ theme, screen, onNav, hasReading }) {
     { k: 'landing', label: 'Home' },
     { k: 'about', label: 'About', enabled: false },
     { k: 'products', label: 'Shop', enabled: true },
-    { k: 'reading', label: 'Your Reading', enabled: hasReading },
+    { k: 'reading', label: hasReading ? 'Your Reading' : 'Try a Reading' },
   ];
   const [isMobile, setIsMobile] = useStateK(false);
   const [menuOpen, setMenuOpen] = useStateK(false);
