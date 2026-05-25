@@ -905,7 +905,7 @@ function Reading({ theme, name, onShop, onShare, onBack }) {
             Keep this spirit close
           </div>
           <div style={{ fontFamily: theme.serif, fontSize: 24, color: theme.fg }}>
-            Make {name}'s reading yours — a scroll, a tee, or a quiet keepsake.
+            Carry {name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()}'s spirit with you — wear it, frame it, gift it.
           </div>
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', flex: '1 1 auto', maxWidth: '100%' }}>
