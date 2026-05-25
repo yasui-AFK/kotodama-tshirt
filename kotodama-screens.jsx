@@ -628,6 +628,12 @@ function NameInput({ theme, name, setName, onSubmit }) {
 
   return (
     <div style={{ padding: '80px 60px', textAlign: 'center', minHeight: 600, background: theme.bg, position: 'relative', overflow: 'hidden' }}>
+      {/* Subtle multi-color light particles drifting behind the kanji */}
+      <div aria-hidden style={{
+        position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
+      }}>
+        <window.LightParticles blobs={window.KT_RITUAL_BLOBS}/>
+      </div>
       {/* 言霊 brushed kanji backdrop */}
       <div aria-hidden style={{
         position: 'absolute', inset: 0, zIndex: 0,
@@ -730,6 +736,15 @@ function Reading({ theme, name, onShop, onShare, onBack }) {
 
   return (
     <div style={{ padding: 'clamp(40px, 6vw, 60px) clamp(20px, 5vw, 60px) 80px', position: 'relative', overflow: 'hidden', background: theme.bg }}>
+      {/* Subtle multi-color light particles drifting behind the kanji (top viewport only) */}
+      <div aria-hidden style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: '100vh', zIndex: 0,
+        pointerEvents: 'none',
+        maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+      }}>
+        <window.LightParticles blobs={window.KT_RITUAL_BLOBS} opacity={0.4}/>
+      </div>
       {/* 言霊 brushed kanji backdrop — subtle hint on cream palette (was Sumi-Noir era 0.35) */}
       <div aria-hidden style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: '100vh', zIndex: 0,

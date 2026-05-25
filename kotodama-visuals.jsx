@@ -142,6 +142,72 @@ window.NameReveal = function NameReveal({ syllables, fontSize = 72, color = '#15
   );
 };
 
+window.LightParticles = function LightParticles({
+  blobs,
+  blur = 40,
+  blendMode = 'multiply',
+  opacity = 0.5,
+  style = {},
+}) {
+  const canvasRef = useRef(null);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let w, h, animId;
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.width = canvas.offsetWidth * dpr;
+      h = canvas.height = canvas.offsetHeight * dpr;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+    function draw(t) {
+      ctx.clearRect(0, 0, w, h);
+      ctx.globalCompositeOperation = 'source-over';
+      const minDim = Math.min(w, h);
+      blobs.forEach(b => {
+        const xOff = Math.sin(b.px + t * b.sx) * w * 0.18;
+        const yOff = Math.cos(b.py + t * b.sy) * h * 0.15;
+        const x = b.cx * w + xOff;
+        const y = b.cy * h + yOff;
+        const r = b.r * minDim * (1 + 0.1 * Math.sin(t * 0.0004 + b.px));
+        const [R, G, B] = b.c;
+        const a = b.a != null ? b.a : 0.85;
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+        grad.addColorStop(0,   `rgba(${R},${G},${B},${a})`);
+        grad.addColorStop(0.3, `rgba(${R},${G},${B},${a * 0.4})`);
+        grad.addColorStop(0.6, `rgba(${R},${G},${B},${a * 0.12})`);
+        grad.addColorStop(1,   `rgba(${R},${G},${B},0)`);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      animId = requestAnimationFrame(draw);
+    }
+    animId = requestAnimationFrame(draw);
+    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize); };
+  }, [blobs]);
+  return <canvas ref={canvasRef} aria-hidden style={{
+    width: '100%', height: '100%', display: 'block',
+    pointerEvents: 'none', filter: `blur(${blur}px)`,
+    mixBlendMode: blendMode, opacity,
+    ...style,
+  }}/>;
+};
+
+// Multi-color palette for NameInput / Reading: Cream + Dusk Mauve + Sage,
+// scattered across the canvas. Subtle accent behind the kanji backdrop.
+window.KT_RITUAL_BLOBS = [
+  { c: [245, 220, 180], cx: 0.15, cy: 0.20, r: 0.22, px: 0.0, py: 1.5, sx: 0.00028, sy: 0.00038, a: 0.50 }, // cream
+  { c: [255, 235, 200], cx: 0.85, cy: 0.78, r: 0.20, px: 1.2, py: 0.5, sx: 0.00040, sy: 0.00029, a: 0.45 }, // champagne
+  { c: [200, 130, 104], cx: 0.78, cy: 0.18, r: 0.18, px: 2.1, py: 2.4, sx: 0.00033, sy: 0.00045, a: 0.40 }, // dusk mauve
+  { c: [180, 110,  90], cx: 0.22, cy: 0.82, r: 0.18, px: 3.0, py: 1.0, sx: 0.00037, sy: 0.00034, a: 0.38 }, // dusk mauve deep
+  { c: [180, 180, 140], cx: 0.50, cy: 0.42, r: 0.20, px: 0.8, py: 2.8, sx: 0.00031, sy: 0.00042, a: 0.42 }, // sage
+  { c: [160, 170, 130], cx: 0.55, cy: 0.62, r: 0.18, px: 1.7, py: 0.2, sx: 0.00041, sy: 0.00036, a: 0.38 }, // sage deep
+];
+
 window.VerticalKana = function VerticalKana({ text, fontSize = 36, color = '#15130f', style = {} }) {
   return (
     <div style={{
