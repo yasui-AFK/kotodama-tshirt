@@ -144,9 +144,9 @@ window.NameReveal = function NameReveal({ syllables, fontSize = 72, color = '#15
 
 window.LightParticles = function LightParticles({
   blobs,
-  blur = 40,
+  blur = 25,
   blendMode = 'multiply',
-  opacity = 0.5,
+  opacity = 0.85,
   style = {},
 }) {
   const canvasRef = useRef(null);
@@ -200,12 +200,12 @@ window.LightParticles = function LightParticles({
 // Multi-color palette for NameInput / Reading: Cream + Dusk Mauve + Sage,
 // scattered across the canvas. Subtle accent behind the kanji backdrop.
 window.KT_RITUAL_BLOBS = [
-  { c: [245, 220, 180], cx: 0.15, cy: 0.20, r: 0.22, px: 0.0, py: 1.5, sx: 0.00028, sy: 0.00038, a: 0.50 }, // cream
-  { c: [255, 235, 200], cx: 0.85, cy: 0.78, r: 0.20, px: 1.2, py: 0.5, sx: 0.00040, sy: 0.00029, a: 0.45 }, // champagne
-  { c: [200, 130, 104], cx: 0.78, cy: 0.18, r: 0.18, px: 2.1, py: 2.4, sx: 0.00033, sy: 0.00045, a: 0.40 }, // dusk mauve
-  { c: [180, 110,  90], cx: 0.22, cy: 0.82, r: 0.18, px: 3.0, py: 1.0, sx: 0.00037, sy: 0.00034, a: 0.38 }, // dusk mauve deep
-  { c: [180, 180, 140], cx: 0.50, cy: 0.42, r: 0.20, px: 0.8, py: 2.8, sx: 0.00031, sy: 0.00042, a: 0.42 }, // sage
-  { c: [160, 170, 130], cx: 0.55, cy: 0.62, r: 0.18, px: 1.7, py: 0.2, sx: 0.00041, sy: 0.00036, a: 0.38 }, // sage deep
+  { c: [245, 220, 180], cx: 0.15, cy: 0.20, r: 0.22, px: 0.0, py: 1.5, sx: 0.00028, sy: 0.00038, a: 0.85 }, // cream
+  { c: [255, 235, 200], cx: 0.85, cy: 0.78, r: 0.20, px: 1.2, py: 0.5, sx: 0.00040, sy: 0.00029, a: 0.80 }, // champagne
+  { c: [200, 130, 104], cx: 0.78, cy: 0.18, r: 0.18, px: 2.1, py: 2.4, sx: 0.00033, sy: 0.00045, a: 0.75 }, // dusk mauve
+  { c: [180, 110,  90], cx: 0.22, cy: 0.82, r: 0.18, px: 3.0, py: 1.0, sx: 0.00037, sy: 0.00034, a: 0.72 }, // dusk mauve deep
+  { c: [180, 180, 140], cx: 0.50, cy: 0.42, r: 0.20, px: 0.8, py: 2.8, sx: 0.00031, sy: 0.00042, a: 0.78 }, // sage
+  { c: [160, 170, 130], cx: 0.55, cy: 0.62, r: 0.18, px: 1.7, py: 0.2, sx: 0.00041, sy: 0.00036, a: 0.72 }, // sage deep
 ];
 
 window.VerticalKana = function VerticalKana({ text, fontSize = 36, color = '#15130f', style = {} }) {

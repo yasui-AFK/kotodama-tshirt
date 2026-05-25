@@ -743,7 +743,7 @@ function Reading({ theme, name, onShop, onShare, onBack }) {
         maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
         WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
       }}>
-        <window.LightParticles blobs={window.KT_RITUAL_BLOBS} opacity={0.4}/>
+        <window.LightParticles blobs={window.KT_RITUAL_BLOBS} opacity={0.7}/>
       </div>
       {/* 言霊 brushed kanji backdrop — subtle hint on cream palette (was Sumi-Noir era 0.35) */}
       <div aria-hidden style={{
