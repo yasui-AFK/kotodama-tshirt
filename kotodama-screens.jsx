@@ -105,7 +105,8 @@ function Logo({ theme, size = 18 }) {
 
 function NavBar({ theme, screen, onNav, hasReading }) {
   const items = [
-    { k: 'about', label: 'About' },
+    { k: 'landing', label: 'Home' },
+    { k: 'about', label: 'About', enabled: false },
     { k: 'products', label: 'Shop', enabled: true },
     { k: 'reading', label: 'Your Reading', enabled: hasReading },
   ];
@@ -750,10 +751,10 @@ function Reading({ theme, name, onShop, onShare, onBack }) {
       <div style={{ position: 'relative', zIndex: 1 }}>
       {onBack && (
         <button onClick={onBack} style={{
-          background: 'none', border: 0, cursor: 'pointer',
-          color: theme.sub, fontFamily: theme.mono, fontSize: 11,
-          letterSpacing: '0.2em', textTransform: 'uppercase',
-          padding: 0, marginBottom: 32, display: 'inline-block',
+          background: 'none', border: `1px solid ${theme.fg}`, cursor: 'pointer',
+          color: theme.fg, fontFamily: theme.mono, fontSize: 12,
+          letterSpacing: '0.18em', textTransform: 'uppercase',
+          padding: '12px 18px', marginBottom: 32, display: 'inline-block',
         }}>← Try a different name</button>
       )}
       <div style={{
