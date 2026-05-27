@@ -472,7 +472,7 @@ function Landing({ theme, onStart }) {
           </div>
 
           {/* Hero CTA — fades in after logo (3s), floats gently, color-flips with video (8s) */}
-          <button onClick={onStart} style={{
+          <button onClick={onStart} className="kt-lift" style={{
             marginTop: 'clamp(32px, 6vw, 56px)',
             padding: 'clamp(14px, 2.5vw, 22px) clamp(28px, 6vw, 56px)',
             background: 'transparent', color: '#3a2e26',
@@ -595,13 +595,13 @@ function Landing({ theme, onStart }) {
               fontStyle: 'italic',
               textShadow: '0 0 24px rgba(0,0,0,0.6)',
             }}>{s.desc}</p>
-            <button onClick={onStart} style={{
+            <button onClick={onStart} className="kt-lift" style={{
               padding: 'clamp(14px, 2.5vw, 22px) clamp(28px, 6vw, 56px)',
               background: 'transparent', color: LIGHT,
               border: `1px solid ${LIGHT}`,
               fontFamily: theme.mono, fontSize: 'clamp(12px, 1.5vw, 15px)',
               letterSpacing: '0.22em', textTransform: 'uppercase',
-              cursor: 'pointer', transition: 'all 0.3s',
+              cursor: 'pointer',
             }}>{s.cta} →</button>
           </div>
         </section>
@@ -688,6 +688,7 @@ function NameInput({ theme, name, setName, onSubmit }) {
           </div>
 
           <button onClick={begin} disabled={!name.trim() || reading.syllables.length === 0}
+            className={name.trim() ? 'kt-lift' : ''}
             style={{
               marginTop: 56, background: theme.fg, color: theme.bg, border: 0, padding: '16px 40px',
               fontFamily: theme.sans, fontSize: 12, letterSpacing: '0.18em', textTransform: 'uppercase',
@@ -914,19 +915,19 @@ function Reading({ theme, name, onShop, onShare, onBack }) {
           </div>
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', flex: '1 1 auto', maxWidth: '100%' }}>
-          <button onClick={onShare} style={{
+          <button onClick={onShare} className="kt-lift" style={{
             background: 'none', color: theme.fg, border: `1px solid ${theme.fg}`,
             padding: '14px 22px', fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em',
             textTransform: 'uppercase', cursor: 'pointer',
             flex: '1 1 200px', minWidth: 0,
           }}>Share my reading</button>
-          <button onClick={onBack} style={{
+          <button onClick={onBack} className="kt-lift" style={{
             background: 'none', color: theme.fg, border: `1px solid ${theme.fg}`,
             padding: '14px 22px', fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em',
             textTransform: 'uppercase', cursor: 'pointer',
             flex: '1 1 200px', minWidth: 0,
           }}>Brush a name for someone →</button>
-          <button onClick={onShop} style={{
+          <button onClick={onShop} className="kt-lift" style={{
             background: theme.fg, color: theme.bg, border: 0,
             padding: '14px 26px', fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em',
             textTransform: 'uppercase', cursor: 'pointer',

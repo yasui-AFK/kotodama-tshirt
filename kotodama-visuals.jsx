@@ -363,6 +363,20 @@ if (!document.getElementById('kt-anims')) {
     }
     .kt-fadeup { animation: kt-fadeup 0.8s cubic-bezier(.2,.7,.3,1) both; }
     .kt-inkbleed { animation: kt-inkbleed 1.2s cubic-bezier(.2,.7,.3,1) both; }
+    /* Hover lift for primary CTAs — gentle rise + soft shadow */
+    .kt-lift {
+      transition: transform 0.28s cubic-bezier(0.2, 0.7, 0.3, 1),
+                  box-shadow 0.28s cubic-bezier(0.2, 0.7, 0.3, 1),
+                  border-color 0.28s ease;
+    }
+    .kt-lift:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+    }
+    .kt-lift:active {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+    }
     /* iOS Safari: hide the in-stream overlay play button but keep the
        start-playback-button reachable so users can tap when autoplay is blocked. */
     video::-webkit-media-controls,

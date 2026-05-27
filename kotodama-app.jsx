@@ -459,7 +459,7 @@ function ShareModal({ theme, name, reading, onClose }) {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 22 }}>
           {['Instagram', 'TikTok', 'Download'].map(b => (
-            <button key={b} style={{
+            <button key={b} className="kt-lift" style={{
               padding: '14px', background: 'none', cursor: 'pointer',
               border: `1px solid ${theme.line}`, color: theme.fg,
               fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase',
