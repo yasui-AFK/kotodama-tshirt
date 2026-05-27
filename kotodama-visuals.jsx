@@ -145,7 +145,7 @@ window.NameReveal = function NameReveal({ syllables, fontSize = 72, color = '#15
 window.LightParticles = function LightParticles({
   blobs,
   blur = 25,
-  blendMode = 'multiply',
+  blendMode = 'screen',
   opacity = 0.85,
   style = {},
 }) {

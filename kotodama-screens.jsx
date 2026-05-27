@@ -35,19 +35,19 @@ window.KT_THEMES = {
     tone: 'midnight',
   },
   sakura: {
-    name: 'Warm Peach Light',
-    bg: '#fff5e8',
-    fg: '#3a2e26',
-    sub: 'rgba(58,46,38,0.55)',
-    line: 'rgba(58,46,38,0.15)',
-    paper: '#f9e8d6',
+    name: 'Warm Sepia Dark',
+    bg: '#1c1611',
+    fg: '#f5ecdf',
+    sub: 'rgba(245,236,223,0.60)',
+    line: 'rgba(245,236,223,0.18)',
+    paper: '#2a2118',
     accent: '#c9533a',
-    accent2: '#c98268',
-    cardBg: 'rgba(58,46,38,0.04)',
+    accent2: '#d68868',
+    cardBg: 'rgba(245,236,223,0.05)',
     serif: '"Shippori Mincho", "Noto Serif JP", serif',
     sans: '"Inter", system-ui, sans-serif',
     mono: '"JetBrains Mono", monospace',
-    tone: 'warm',
+    tone: 'dark',
   },
 };
 
@@ -363,7 +363,7 @@ function Landing({ theme, onStart }) {
             6-7.8s    video fades in + text color-flips brown → cream + particles fade in
             10-12s    「言霊」fades out
             11.5-13s  Bible copy fades in */}
-      <section style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden', background: theme.bg }}>
+      <section style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden', background: '#fff5e8' }}>
         {/* logo intro */}
         <div aria-hidden style={{
           position: 'absolute', inset: 0, zIndex: 4,
