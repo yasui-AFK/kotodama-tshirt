@@ -393,7 +393,11 @@ function ShareModal({ theme, name, reading, onClose }) {
 
   const renderToBlob = async () => {
     if (!reading || !window.KT_PDF) return null;
-    await window.KT_PDF.renderShareCard(reading.name, reading.hiragana, reading.kotodamaResults);
+    // window.readName builds the reading with raw=kotodamaResults
+    // (data-bridge.js:304), so we pass reading.raw here.
+    const kotodamaResults = reading.kotodamaResults || reading.raw;
+    if (!kotodamaResults) return null;
+    await window.KT_PDF.renderShareCard(reading.name, reading.hiragana, kotodamaResults);
     const canvas = document.getElementById('shareCardCanvas');
     if (!canvas) return null;
     return await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
