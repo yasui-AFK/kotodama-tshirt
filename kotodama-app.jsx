@@ -383,11 +383,33 @@ function ShareModal({ theme, name, reading, onClose }) {
           aspectRatio: '4/5', background: theme.paper, border: `1px solid ${theme.line}`,
           padding: '36px 28px', display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'space-between',
+          position: 'relative', overflow: 'hidden',
           backgroundImage: `radial-gradient(800px 600px at 50% 50%, rgba(180,150,100,0.08), transparent 70%)`,
         }}>
+          {/* light particles backdrop */}
+          <div aria-hidden style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0,
+          }}>
+            <window.LightParticles blobs={window.KT_RITUAL_BLOBS} opacity={0.55}/>
+          </div>
+          {/* 言霊 brushed kanji backdrop */}
+          <div aria-hidden style={{
+            position: 'absolute', inset: 0, zIndex: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            pointerEvents: 'none', opacity: 0.10,
+          }}>
+            <svg viewBox="0 0 440 220" style={{ width: '92%', display: 'block' }}>
+              <text x="110" y="180" textAnchor="middle" style={{
+                fontFamily: theme.serif, fontWeight: 700, fontSize: 210, fill: theme.fg,
+              }}>言</text>
+              <text x="330" y="180" textAnchor="middle" style={{
+                fontFamily: theme.serif, fontWeight: 700, fontSize: 210, fill: theme.fg,
+              }}>霊</text>
+            </svg>
+          </div>
           <div style={{ fontFamily: theme.mono, fontSize: 9, letterSpacing: '0.32em',
-                        textTransform: 'uppercase', color: theme.sub }}>言霊 · KOTODAMA</div>
-          <div style={{ textAlign: 'center' }}>
+                        textTransform: 'uppercase', color: theme.sub, position: 'relative', zIndex: 1 }}>言霊 · KOTODAMA</div>
+          <div style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
             <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 18 }}>
               {reading && reading.syllables.map((s, i) => (
                 <span key={i} style={{ fontFamily: theme.serif, fontSize: 56, color: theme.fg }}>{s.kana}</span>
@@ -401,7 +423,7 @@ function ShareModal({ theme, name, reading, onClose }) {
             </div>
           </div>
           <div style={{ fontFamily: theme.mono, fontSize: 9, letterSpacing: '0.28em',
-                        textTransform: 'uppercase', color: theme.sub }}>kotodama.studio</div>
+                        textTransform: 'uppercase', color: theme.sub, position: 'relative', zIndex: 1 }}>kotodama.studio</div>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 22 }}>
