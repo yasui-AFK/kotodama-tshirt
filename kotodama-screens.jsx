@@ -879,19 +879,9 @@ function Reading({ theme, name, onShop, onShare, onBack }) {
             </span>
           </div>
           <p style={{ fontFamily: theme.serif, fontSize: 'clamp(20px, 5vw, 22px)', lineHeight: 1.55, color: theme.fg,
-                      fontStyle: 'italic', maxWidth: 540, margin: '0 auto 24px', textAlign: 'center' }}>
+                      fontStyle: 'italic', maxWidth: 540, margin: '0 auto 36px', textAlign: 'center' }}>
             “{active.poem}”
           </p>
-          {active.deepMeaning && (
-            <p style={{
-              fontFamily: theme.serif, fontSize: 'clamp(16px, 4vw, 18px)', lineHeight: 1.75,
-              color: theme.fg, fontWeight: 300,
-              maxWidth: 580, margin: '0 auto 36px',
-              opacity: 0.85, textAlign: 'left',
-            }}>
-              {active.deepMeaning}
-            </p>
-          )}
 
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center' }}>
             <button onClick={() => setActiveIdx((activeIdx - 1 + reading.syllables.length) % reading.syllables.length)}
