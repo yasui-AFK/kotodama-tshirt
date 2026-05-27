@@ -389,6 +389,61 @@ function Row({ theme, label, value, bold }) {
 }
 
 function ShareModal({ theme, name, reading, onClose }) {
+  const [busy, setBusy] = useStateK2(false);
+
+  const renderToBlob = async () => {
+    if (!reading || !window.KT_PDF) return null;
+    await window.KT_PDF.renderShareCard(reading.name, reading.hiragana, reading.kotodamaResults);
+    const canvas = document.getElementById('shareCardCanvas');
+    if (!canvas) return null;
+    return await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  };
+
+  const handleShare = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const blob = await renderToBlob();
+      if (!blob) { setBusy(false); return; }
+      const file = new File([blob], `kotodama-${(name || 'reading').toLowerCase()}.png`, { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: `${name}'s kotodama reading`,
+            text: 'My name, in the spirit of every sound. 言霊 · kotodama.studio',
+          });
+        } catch (_) { /* user cancelled */ }
+      } else {
+        triggerDownload(blob);
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const triggerDownload = (blob) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kotodama-${(name || 'reading').toLowerCase()}.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  const handleDownload = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const blob = await renderToBlob();
+      if (blob) triggerDownload(blob);
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <div style={{
       position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100,
@@ -458,13 +513,22 @@ function ShareModal({ theme, name, reading, onClose }) {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 22 }}>
-          {['Instagram', 'TikTok', 'Download'].map(b => (
-            <button key={b} className="kt-lift" style={{
-              padding: '14px', background: 'none', cursor: 'pointer',
-              border: `1px solid ${theme.line}`, color: theme.fg,
-              fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase',
-            }}>{b}</button>
-          ))}
+          <button onClick={handleShare} disabled={busy} className={busy ? '' : 'kt-lift'} style={{
+            padding: '14px', background: theme.fg, color: theme.bg, cursor: busy ? 'wait' : 'pointer',
+            border: 0,
+            fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase',
+            opacity: busy ? 0.6 : 1,
+          }}>{busy ? 'Preparing…' : 'Share'}</button>
+          <button onClick={handleDownload} disabled={busy} className={busy ? '' : 'kt-lift'} style={{
+            padding: '14px', background: 'none', cursor: busy ? 'wait' : 'pointer',
+            border: `1px solid ${theme.line}`, color: theme.fg,
+            fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase',
+            opacity: busy ? 0.6 : 1,
+          }}>Download PNG</button>
+          <div style={{ fontFamily: theme.serif, fontSize: 12, color: theme.sub, textAlign: 'center',
+                        marginTop: 4, fontStyle: 'italic', lineHeight: 1.5 }}>
+            Share opens your phone's share sheet — pick Instagram, TikTok, X, anywhere.
+          </div>
         </div>
       </div>
     </div>
