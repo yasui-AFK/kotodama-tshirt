@@ -38,17 +38,17 @@ function Products({ theme, name, reading, onPick }) {
       <div style={{ position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center', marginBottom: 'clamp(36px, 6vw, 56px)' }}>
         <div style={{ fontFamily: theme.mono, fontSize: 11, letterSpacing: '0.32em',
-                      textTransform: 'uppercase', color: theme.sub, marginBottom: 22 }}>
-          THE COLLECTION
+                      textTransform: 'uppercase', color: theme.accent, marginBottom: 22 }}>
+          THE COLLECTION · OPENING SOON
         </div>
         <h2 style={{ fontFamily: theme.serif, fontSize: 'clamp(32px, 7vw, 56px)', color: theme.fg,
                      fontWeight: 400, margin: '0 0 16px', lineHeight: 1.1 }}>
-          Things to keep <em style={{ fontStyle: 'italic' }}>{possessive}</em> reading.
+          Readings worth keeping <em style={{ fontStyle: 'italic' }}>{possessive}</em> reading for.
         </h2>
         <p style={{ fontFamily: theme.serif, fontSize: 'clamp(15px, 2.2vw, 17px)', color: theme.sub,
                     maxWidth: 520, margin: '0 auto' }}>
-          Each piece is made to order with your name brushed in archival ink.
-          {reading && reading.archetype && <> Curated for <em>{reading.archetype.name}</em>.</>}
+          We're still refining each reading by hand. The studio opens soon —
+          here's what's coming.
         </p>
       </div>
 
@@ -56,18 +56,20 @@ function Products({ theme, name, reading, onPick }) {
                     gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 360px), 1fr))',
                     gap: 'clamp(20px, 3vw, 36px)', maxWidth: 980, margin: '0 auto' }}>
         {window.KT_PRODUCTS.map(p => (
-          <button key={p.id} onClick={() => onPick(p)} style={{
+          <div key={p.id} style={{
             background: theme.cardBg, border: `1px solid ${theme.line}`,
             padding: 'clamp(20px, 3vw, 28px)', textAlign: 'left',
-            cursor: 'pointer', transition: 'all 0.25s', display: 'flex', flexDirection: 'column', gap: 18,
-            color: 'inherit',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)';
-                                e.currentTarget.style.borderColor = theme.fg; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)';
-                                e.currentTarget.style.borderColor = theme.line; }}>
+            cursor: 'default', display: 'flex', flexDirection: 'column', gap: 18,
+            color: 'inherit', opacity: 0.85,
+          }}>
             <div style={{ position: 'relative' }}>
               <KPH label={p.placeholder} theme={theme} h={280}/>
+              <div style={{
+                position: 'absolute', top: 16, left: 16,
+                fontFamily: theme.mono, fontSize: 10, letterSpacing: '0.24em',
+                textTransform: 'uppercase', color: theme.bg,
+                background: theme.accent, padding: '6px 12px',
+              }}>Coming Soon</div>
               <div style={{
                 position: 'absolute', top: 16, right: 16,
                 fontFamily: theme.serif, fontSize: 32, color: theme.fg, opacity: 0.5,
@@ -89,7 +91,7 @@ function Products({ theme, name, reading, onPick }) {
               <div style={{ fontFamily: theme.serif, fontStyle: 'italic',
                             fontSize: 15, color: theme.sub }}>{p.sub}</div>
             </div>
-          </button>
+          </div>
         ))}
       </div>
       </div>
