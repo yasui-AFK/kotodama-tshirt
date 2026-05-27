@@ -391,10 +391,54 @@ function Row({ theme, label, value, bold }) {
 function ShareModal({ theme, name, reading, onClose }) {
   const [busy, setBusy] = useStateK2(false);
 
+  const SITE_URL = 'https://yasui-afk.github.io/kotodama-tshirt/';
+  const shareText = `${name}'s name, in the spirit of every sound. 言霊 · KOTODAMA`;
+
+  const shareLinks = [
+    {
+      label: 'X',
+      bg: '#000000', color: '#ffffff',
+      url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(SITE_URL)}`,
+      icon: (
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644z"/>
+        </svg>
+      ),
+    },
+    {
+      label: 'Facebook',
+      bg: '#1877f2', color: '#ffffff',
+      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(SITE_URL)}`,
+      icon: (
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+      ),
+    },
+    {
+      label: 'LINE',
+      bg: '#06c755', color: '#ffffff',
+      url: `https://line.me/R/share?text=${encodeURIComponent(shareText + ' ' + SITE_URL)}`,
+      icon: (
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+          <path d="M19.365 9.863c.349 0 .63.285.631.631 0 .345-.281.63-.631.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.282.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.105.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
+        </svg>
+      ),
+    },
+    {
+      label: 'Pinterest',
+      bg: '#bd081c', color: '#ffffff',
+      url: `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(SITE_URL)}&description=${encodeURIComponent(shareText)}`,
+      icon: (
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+          <path d="M12 0a12 12 0 0 0-4.373 23.178c-.105-.928-.2-2.36.04-3.376.222-.913 1.439-5.815 1.439-5.815s-.366-.735-.366-1.821c0-1.708 1-2.984 2.245-2.984 1.06 0 1.572.795 1.572 1.748 0 1.065-.677 2.658-1.027 4.135-.291 1.236.62 2.245 1.839 2.245 2.208 0 3.904-2.328 3.904-5.685 0-2.972-2.137-5.051-5.193-5.051-3.537 0-5.612 2.652-5.612 5.391 0 1.067.41 2.213.924 2.836.102.122.117.229.085.354-.094.39-.302 1.235-.343 1.408-.054.227-.18.275-.413.166-1.541-.717-2.504-2.972-2.504-4.781 0-3.895 2.83-7.471 8.157-7.471 4.281 0 7.612 3.051 7.612 7.131 0 4.257-2.685 7.683-6.412 7.683-1.251 0-2.428-.65-2.83-1.418l-.769 2.929c-.279 1.072-1.029 2.414-1.531 3.231C9.795 23.838 10.881 24 12 24c6.624 0 12-5.376 12-12S18.624 0 12 0z"/>
+        </svg>
+      ),
+    },
+  ];
+
   const renderToBlob = async () => {
     if (!reading || !window.KT_PDF) return null;
-    // window.readName builds the reading with raw=kotodamaResults
-    // (data-bridge.js:304), so we pass reading.raw here.
     const kotodamaResults = reading.kotodamaResults || reading.raw;
     if (!kotodamaResults) return null;
     await window.KT_PDF.renderShareCard(reading.name, reading.hiragana, kotodamaResults);
@@ -403,46 +447,20 @@ function ShareModal({ theme, name, reading, onClose }) {
     return await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
   };
 
-  const handleShare = async () => {
-    if (busy) return;
-    setBusy(true);
-    try {
-      const blob = await renderToBlob();
-      if (!blob) { setBusy(false); return; }
-      const file = new File([blob], `kotodama-${(name || 'reading').toLowerCase()}.png`, { type: 'image/png' });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({
-            files: [file],
-            title: `${name}'s kotodama reading`,
-            text: 'My name, in the spirit of every sound. 言霊 · kotodama.studio',
-          });
-        } catch (_) { /* user cancelled */ }
-      } else {
-        triggerDownload(blob);
-      }
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const triggerDownload = (blob) => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `kotodama-${(name || 'reading').toLowerCase()}.png`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  };
-
   const handleDownload = async () => {
     if (busy) return;
     setBusy(true);
     try {
       const blob = await renderToBlob();
-      if (blob) triggerDownload(blob);
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `kotodama-${(name || 'reading').toLowerCase()}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     } finally {
       setBusy(false);
     }
@@ -517,21 +535,39 @@ function ShareModal({ theme, name, reading, onClose }) {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 22 }}>
-          <button onClick={handleShare} disabled={busy} className={busy ? '' : 'kt-lift'} style={{
-            padding: '14px', background: theme.fg, color: theme.bg, cursor: busy ? 'wait' : 'pointer',
-            border: 0,
-            fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase',
-            opacity: busy ? 0.6 : 1,
-          }}>{busy ? 'Preparing…' : 'Share'}</button>
+          {shareLinks.map(link => (
+            <a key={link.label}
+               href={link.url}
+               target="_blank"
+               rel="noopener noreferrer"
+               className="kt-lift"
+               style={{
+                 padding: '14px 16px',
+                 background: link.bg, color: link.color,
+                 textDecoration: 'none',
+                 fontFamily: theme.sans, fontSize: 12, letterSpacing: '0.16em', textTransform: 'uppercase',
+                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+                 cursor: 'pointer', textAlign: 'center',
+               }}>
+              {link.icon}
+              <span>{link.label}</span>
+            </a>
+          ))}
           <button onClick={handleDownload} disabled={busy} className={busy ? '' : 'kt-lift'} style={{
-            padding: '14px', background: 'none', cursor: busy ? 'wait' : 'pointer',
-            border: `1px solid ${theme.line}`, color: theme.fg,
-            fontFamily: theme.sans, fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase',
+            padding: '14px 16px', background: 'none', cursor: busy ? 'wait' : 'pointer',
+            border: `1px solid ${theme.fg}`, color: theme.fg,
+            fontFamily: theme.sans, fontSize: 12, letterSpacing: '0.16em', textTransform: 'uppercase',
             opacity: busy ? 0.6 : 1,
-          }}>Download PNG</button>
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+          }}>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span>{busy ? 'Preparing…' : 'Download PNG'}</span>
+          </button>
           <div style={{ fontFamily: theme.serif, fontSize: 12, color: theme.sub, textAlign: 'center',
                         marginTop: 4, fontStyle: 'italic', lineHeight: 1.5 }}>
-            Share opens your phone's share sheet — pick Instagram, TikTok, X, anywhere.
+            For Instagram or TikTok, download the PNG and post from the app.
           </div>
         </div>
       </div>
