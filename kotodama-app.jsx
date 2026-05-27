@@ -7,7 +7,35 @@ const { Logo: KLogo, NavBar: KNavBar, Placeholder: KPH, Landing: KLanding,
 function Products({ theme, name, reading, onPick }) {
   const possessive = name && name !== 'your' ? `${name}'s` : 'your';
   return (
-    <div style={{ padding: 'clamp(24px, 5vw, 60px) clamp(20px, 5vw, 60px) 80px' }}>
+    <div style={{ padding: 'clamp(24px, 5vw, 60px) clamp(20px, 5vw, 60px) 80px', position: 'relative', overflow: 'hidden' }}>
+      {/* Subtle multi-color light particles drifting behind the collection */}
+      <div aria-hidden style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: '100vh', zIndex: 0,
+        pointerEvents: 'none',
+        maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+      }}>
+        <window.LightParticles blobs={window.KT_RITUAL_BLOBS} opacity={0.7}/>
+      </div>
+      {/* 言霊 brushed kanji backdrop */}
+      <div aria-hidden style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: '100vh', zIndex: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        pointerEvents: 'none', opacity: 0.10,
+        maskImage: 'linear-gradient(to bottom, black 55%, transparent 100%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, black 55%, transparent 100%)',
+      }}>
+        <svg viewBox="0 0 440 220" style={{ width: 'min(900px, 75vw)', display: 'block' }}>
+          <text x="110" y="180" textAnchor="middle" style={{
+            fontFamily: theme.serif, fontWeight: 700, fontSize: 210, fill: theme.fg,
+          }}>言</text>
+          <text x="330" y="180" textAnchor="middle" style={{
+            fontFamily: theme.serif, fontWeight: 700, fontSize: 210, fill: theme.fg,
+          }}>霊</text>
+        </svg>
+      </div>
+
+      <div style={{ position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center', marginBottom: 'clamp(36px, 6vw, 56px)' }}>
         <div style={{ fontFamily: theme.mono, fontSize: 11, letterSpacing: '0.32em',
                       textTransform: 'uppercase', color: theme.sub, marginBottom: 22 }}>
@@ -63,6 +91,7 @@ function Products({ theme, name, reading, onPick }) {
             </div>
           </button>
         ))}
+      </div>
       </div>
     </div>
   );
