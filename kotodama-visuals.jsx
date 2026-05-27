@@ -363,18 +363,20 @@ if (!document.getElementById('kt-anims')) {
     }
     .kt-fadeup { animation: kt-fadeup 0.8s cubic-bezier(.2,.7,.3,1) both; }
     .kt-inkbleed { animation: kt-inkbleed 1.2s cubic-bezier(.2,.7,.3,1) both; }
-    /* Hover lift for primary CTAs — gentle rise + soft shadow */
+    /* Springy "purun" lift for primary CTAs — overshoot + soft shadow */
     .kt-lift {
-      transition: transform 0.28s cubic-bezier(0.2, 0.7, 0.3, 1),
-                  box-shadow 0.28s cubic-bezier(0.2, 0.7, 0.3, 1),
+      transition: transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.38s cubic-bezier(0.34, 1.56, 0.64, 1),
                   border-color 0.28s ease;
     }
     .kt-lift:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.32);
+      /* Pause any inline keyframe (e.g. Hero kt-float) so the lift isn't fought */
+      animation-play-state: paused !important;
     }
     .kt-lift:active {
-      transform: translateY(-1px);
+      transform: translateY(-1px) scale(1.01);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
     }
     /* iOS Safari: hide the in-stream overlay play button but keep the
