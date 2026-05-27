@@ -390,13 +390,13 @@ function ShareModal({ theme, name, reading, onClose }) {
           <div aria-hidden style={{
             position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0,
           }}>
-            <window.LightParticles blobs={window.KT_RITUAL_BLOBS} opacity={0.55}/>
+            <window.LightParticles blobs={window.KT_RITUAL_BLOBS} opacity={0.80}/>
           </div>
           {/* 言霊 brushed kanji backdrop */}
           <div aria-hidden style={{
             position: 'absolute', inset: 0, zIndex: 0,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            pointerEvents: 'none', opacity: 0.10,
+            pointerEvents: 'none', opacity: 0.18,
           }}>
             <svg viewBox="0 0 440 220" style={{ width: '92%', display: 'block' }}>
               <text x="110" y="180" textAnchor="middle" style={{
