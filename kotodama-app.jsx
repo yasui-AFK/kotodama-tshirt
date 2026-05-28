@@ -394,7 +394,76 @@ function ShareModal({ theme, name, reading, onClose }) {
   const SITE_URL = 'https://yasui-afk.github.io/kotodama-tshirt/';
   const shareText = `${name}'s name, in the spirit of every sound. 言霊 · KOTODAMA`;
 
+  const renderToBlob = async () => {
+    if (!reading || !window.KT_PDF) return null;
+    const kotodamaResults = reading.kotodamaResults || reading.raw;
+    if (!kotodamaResults) return null;
+    await window.KT_PDF.renderShareCard(reading.name, reading.hiragana, kotodamaResults);
+    const canvas = document.getElementById('shareCardCanvas');
+    if (!canvas) return null;
+    return await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  };
+
+  const triggerDownload = (blob) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kotodama-${(name || 'reading').toLowerCase()}.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  // For Instagram / TikTok — no web share URL exists, so we route through
+  // navigator.share with the PNG file attached. iOS Safari surfaces the
+  // share sheet with Instagram + TikTok options pre-loaded with the image.
+  const handleAppShare = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const blob = await renderToBlob();
+      if (!blob) return;
+      const file = new File([blob], `kotodama-${(name || 'reading').toLowerCase()}.png`, { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: `${name}'s kotodama reading`,
+            text: shareText,
+          });
+        } catch (_) { /* user cancelled */ }
+      } else {
+        // Desktop / older browsers: just hand them the PNG
+        triggerDownload(blob);
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const shareLinks = [
+    {
+      label: 'Instagram',
+      bg: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+      color: '#ffffff',
+      onClick: handleAppShare,
+      icon: (
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+      ),
+    },
+    {
+      label: 'TikTok',
+      bg: '#010101', color: '#ffffff',
+      onClick: handleAppShare,
+      icon: (
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.66 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.7-.1z"/>
+        </svg>
+      ),
+    },
     {
       label: 'X',
       bg: '#000000', color: '#ffffff',
@@ -437,30 +506,12 @@ function ShareModal({ theme, name, reading, onClose }) {
     },
   ];
 
-  const renderToBlob = async () => {
-    if (!reading || !window.KT_PDF) return null;
-    const kotodamaResults = reading.kotodamaResults || reading.raw;
-    if (!kotodamaResults) return null;
-    await window.KT_PDF.renderShareCard(reading.name, reading.hiragana, kotodamaResults);
-    const canvas = document.getElementById('shareCardCanvas');
-    if (!canvas) return null;
-    return await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-  };
-
   const handleDownload = async () => {
     if (busy) return;
     setBusy(true);
     try {
       const blob = await renderToBlob();
-      if (!blob) return;
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `kotodama-${(name || 'reading').toLowerCase()}.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      if (blob) triggerDownload(blob);
     } finally {
       setBusy(false);
     }
@@ -535,24 +586,30 @@ function ShareModal({ theme, name, reading, onClose }) {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 22 }}>
-          {shareLinks.map(link => (
-            <a key={link.label}
-               href={link.url}
-               target="_blank"
-               rel="noopener noreferrer"
-               className="kt-lift"
-               style={{
-                 padding: '14px 16px',
-                 background: link.bg, color: link.color,
-                 textDecoration: 'none',
-                 fontFamily: theme.sans, fontSize: 12, letterSpacing: '0.16em', textTransform: 'uppercase',
-                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
-                 cursor: 'pointer', textAlign: 'center',
-               }}>
-              {link.icon}
-              <span>{link.label}</span>
-            </a>
-          ))}
+          {shareLinks.map(link => {
+            const sharedStyle = {
+              padding: '14px 16px',
+              background: link.bg, color: link.color,
+              textDecoration: 'none', border: 0,
+              fontFamily: theme.sans, fontSize: 12, letterSpacing: '0.16em', textTransform: 'uppercase',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+              cursor: busy ? 'wait' : 'pointer', textAlign: 'center',
+              opacity: busy ? 0.6 : 1,
+            };
+            const inner = (<>{link.icon}<span>{link.label}</span></>);
+            return link.onClick ? (
+              <button key={link.label} onClick={link.onClick} disabled={busy}
+                      className={busy ? '' : 'kt-lift'} style={sharedStyle}>
+                {inner}
+              </button>
+            ) : (
+              <a key={link.label} href={link.url}
+                 target="_blank" rel="noopener noreferrer"
+                 className="kt-lift" style={sharedStyle}>
+                {inner}
+              </a>
+            );
+          })}
           <button onClick={handleDownload} disabled={busy} className={busy ? '' : 'kt-lift'} style={{
             padding: '14px 16px', background: 'none', cursor: busy ? 'wait' : 'pointer',
             border: `1px solid ${theme.fg}`, color: theme.fg,
@@ -567,7 +624,7 @@ function ShareModal({ theme, name, reading, onClose }) {
           </button>
           <div style={{ fontFamily: theme.serif, fontSize: 12, color: theme.sub, textAlign: 'center',
                         marginTop: 4, fontStyle: 'italic', lineHeight: 1.5 }}>
-            For Instagram or TikTok, download the PNG and post from the app.
+            On phones, Instagram / TikTok open your share sheet to post with the image.
           </div>
         </div>
       </div>
